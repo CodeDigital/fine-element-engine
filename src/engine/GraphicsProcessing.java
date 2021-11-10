@@ -6,8 +6,10 @@ public class GraphicsProcessing extends PApplet implements GraphicSystem{
 
     public final int WIDTH, HEIGHT;
     public final boolean FULLSCREEN, USE_P2D;
+    private Game game;
 
-    protected GraphicsProcessing(int WIDTH, int HEIGHT, boolean FULLSCREEN, boolean USE_P2D) {
+    protected GraphicsProcessing(Game game, int WIDTH, int HEIGHT, boolean FULLSCREEN, boolean USE_P2D) {
+        this.game = game;
         this.WIDTH = WIDTH;
         this.HEIGHT = HEIGHT;
         this.FULLSCREEN = FULLSCREEN;
@@ -19,5 +21,9 @@ public class GraphicsProcessing extends PApplet implements GraphicSystem{
 
     public void settings(){
 
+    }
+
+    public void draw(){
+        game.loop();
     }
 }

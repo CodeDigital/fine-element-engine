@@ -6,12 +6,21 @@ public abstract class Game {
     private double frameStart;
     private double accumulator = 0;
     private double timeDilation = 1;
+    public final int WIDTH, HEIGHT;
+    public final boolean FULLSCREEN, USE_P2D;
 
-    public Game() {
+    public Game(int WIDTH, int HEIGHT, boolean FULLSCREEN, boolean USE_P2D) {
+
         this.frameStart = frameStart;
+        this.WIDTH = WIDTH;
+        this.HEIGHT = HEIGHT;
+        this.FULLSCREEN = FULLSCREEN;
+        this.USE_P2D = USE_P2D;
+        Graphics.start(this, WIDTH, HEIGHT, FULLSCREEN, USE_P2D);
+
     }
 
-    public void draw(){
+    public void loop(){
 
         double currFrameStart = getCurrentTime();
         accumulator += currFrameStart - frameStart;
