@@ -1,6 +1,7 @@
 package engine;
 
 import processing.core.PApplet;
+import processing.opengl.PGraphicsOpenGL;
 
 public class GraphicsProcessing extends PApplet implements GraphicSystem{
 
@@ -20,7 +21,30 @@ public class GraphicsProcessing extends PApplet implements GraphicSystem{
     }
 
     public void settings(){
+        if(FULLSCREEN){
+            if(USE_P2D){
+                fullScreen(P2D);
+            }else{
+                fullScreen();
+            }
+        }else{
+            if(USE_P2D){
+                size(WIDTH, HEIGHT, P2D);
+            }else{
+                size(WIDTH, HEIGHT);
+            }
+        }
 
+        noSmooth();
+    }
+
+    public void setup() {
+        if(USE_P2D){
+            hint(DISABLE_TEXTURE_MIPMAPS);
+            ((PGraphicsOpenGL)g).textureSampling(2);
+        }
+
+        game.setup();
     }
 
     public void draw(){

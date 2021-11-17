@@ -12,7 +12,7 @@ public class Graphics extends GraphicsProcessing{
         g = new Graphics(game, WIDTH, HEIGHT, FULLSCREEN, USE_P2D);
     }
 
-    public static Graphics getG(){
+    public static Graphics G(){
         if(g == null) System.exit(-10);
         return g;
     }

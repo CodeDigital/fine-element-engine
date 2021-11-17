@@ -20,6 +20,8 @@ public abstract class Game {
 
     }
 
+    public abstract void setup();
+
     public void loop(){
 
         double currFrameStart = getCurrentTime();
