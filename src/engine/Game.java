@@ -1,5 +1,7 @@
 package engine;
 
+import engine.math.XMath;
+
 public abstract class Game {
     private final double FPS = 60;
     private final double DT = 1 / FPS;
