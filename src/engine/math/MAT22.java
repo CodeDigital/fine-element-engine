@@ -3,6 +3,13 @@ package engine.math;
 public class MAT22 implements Mathable<MAT22>{
 
     public static final MAT22 ZERO = new MAT22(0, 0, 0, 0);
+    public static final MAT22[] CARDINALS = {
+            new MAT22(-1, 0, 0, -1), // top
+            new MAT22(0, 1, -1, 0), // right
+            new MAT22(1, 0, 0, 1), // down
+            new MAT22(0, -1, 1, 0) // left
+    };
+
     public final double M00, M01, M10, M11;
 
     public MAT22(double m00, double m01, double m10, double m11) {
@@ -43,6 +50,13 @@ public class MAT22 implements Mathable<MAT22>{
             M01 * scalar,
             M10 * scalar,
             M11 * scalar
+        );
+    }
+
+    public V2D multiply(V2D rhs){
+        return new V2D(
+                M00 * rhs.X + M01 * rhs.Y,
+                M10 * rhs.X + M11 * rhs.Y
         );
     }
 

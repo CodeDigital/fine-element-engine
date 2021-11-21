@@ -1,5 +1,6 @@
 import engine.Game;
 import engine.Graphics;
+import engine.containers.FixedWorld;
 
 public class Sandbox extends Game {
 
@@ -9,8 +10,11 @@ public class Sandbox extends Game {
 
     }
 
+    private FixedWorld world;
+
     public Sandbox(int WIDTH, int HEIGHT, boolean FULLSCREEN, boolean USE_P2D) {
         super(WIDTH, HEIGHT, FULLSCREEN, USE_P2D);
+        world = new FixedWorld(100, 100);
     }
 
     @Override
@@ -20,7 +24,7 @@ public class Sandbox extends Game {
 
     @Override
     public void updateLoop(double dt) {
-
+        world.update(dt);
     }
 
     @Override

@@ -1,7 +1,26 @@
 package engine.math;
 
 public class V2D implements Mathable<V2D>{
+
     public static final V2D ZERO = new V2D(0, 0);
+    public static final V2D[] CARDINALS = {
+            new V2D(0, -1),
+            new V2D(1, 0),
+            new V2D(0, 1),
+            new V2D(-1, 0)
+    };
+    public static final V2D[] OCTALS = {
+            new V2D(-1, -1),
+            new V2D(0, -1),
+            new V2D(1, -1),
+            new V2D(1, 0),
+            new V2D(1, 1),
+            new V2D(0, 1),
+            new V2D(-1, 1),
+            new V2D(-1, 0)
+    };
+
+
     public final double X, Y;
 
     public V2D(double x, double y) {
