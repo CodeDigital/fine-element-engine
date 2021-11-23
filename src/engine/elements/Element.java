@@ -2,7 +2,6 @@ package engine.elements;
 
 import engine.Steppable;
 import engine.containers.Cell;
-import engine.elements.rules.Chance;
 import engine.elements.rules.ChanceThreshold;
 import engine.math.V2D;
 

@@ -7,43 +7,45 @@ import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.math.MAT22;
 import engine.math.V2D;
+import processing.core.PConstants;
 
 public class Cell implements Renderable, Steppable {
 
-    public static final int BLACK = Graphics.G().color(0);
+    public static final double WIDTH = 5;
 
     // Associations
-    private final Chunk chunk;
+    public final Chunk CHUNK;
+    public final V2D LOCATION;
     private Element element;
-    private V2D location;
     private MAT22 direction = MAT22.CARDINALS[2];
 
     private boolean updated = false;
 
-    public Cell(Chunk chunk, V2D location) {
-        this.chunk = chunk;
-        this.location = location;
+    public Cell(Chunk CHUNK, V2D LOCATION) {
+        System.out.println(" test ");
+        this.CHUNK = CHUNK;
+        this.LOCATION = LOCATION;
     }
 
     @Override
     public void stepPre(double dt) {
         updated = false;
-        if(element == null) element.stepPre(dt);
+        if(element != null) element.stepPre(dt);
     }
 
     @Override
     public void stepPhysics(double dt) {
-        if(element == null) element.stepPhysics(dt);
+        if(element != null) element.stepPhysics(dt);
     }
 
     @Override
     public void stepFSS(double dt) {
-        if(element == null) element.stepFSS(dt);
+        if(element != null) element.stepFSS(dt);
     }
 
     @Override
     public void stepPost(double dt) {
-        if(element == null) element.stepPost(dt);
+        if(element != null) element.stepPost(dt);
     }
 
     public void swap(Cell with){
@@ -56,7 +58,7 @@ public class Cell implements Renderable, Steppable {
     }
 
     public void swap(V2D with){
-        Cell cellWith = chunk.getCell(with);
+        Cell cellWith = CHUNK.getCell(with);
         swap(cellWith);
     }
 
@@ -72,7 +74,7 @@ public class Cell implements Renderable, Steppable {
     }
 
     public boolean canSwap(V2D with){
-        Cell cellWith = chunk.getCell(with);
+        Cell cellWith = CHUNK.getCell(with);
         return canSwap(cellWith);
     }
 
@@ -81,16 +83,12 @@ public class Cell implements Renderable, Steppable {
 
         if(updated){
             if(element == null){
-                chunk.setPixel(location, BLACK);
+                CHUNK.setPixel(LOCATION, Graphics.G().color(0));
             }else{
-                chunk.setPixel(location, element.getColour());
+                CHUNK.setPixel(LOCATION, element.getColour());
             }
         }
 
-    }
-
-    public Chunk getChunk() {
-        return chunk;
     }
 
     public Element getElement() {
@@ -99,10 +97,6 @@ public class Cell implements Renderable, Steppable {
 
     public void setElement(Element element) {
         this.element = element;
-    }
-
-    public V2D getLocation() {
-        return location;
     }
 
     public MAT22 getDirection() {

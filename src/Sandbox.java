@@ -1,20 +1,18 @@
 import engine.Game;
 import engine.Graphics;
 import engine.containers.FixedWorld;
+import engine.containers.Grid;
 
 public class Sandbox extends Game {
 
     public static void main(String[] args) {
-
-        Sandbox p = new Sandbox(1280, 720, false, false);
-
+        FixedWorld world = new FixedWorld(10,10);
+        Sandbox s = new Sandbox(world, 1280, 720, false, false);
+        s.start();
     }
 
-    private FixedWorld world;
-
-    public Sandbox(int WIDTH, int HEIGHT, boolean FULLSCREEN, boolean USE_P2D) {
-        super(WIDTH, HEIGHT, FULLSCREEN, USE_P2D);
-        world = new FixedWorld(100, 100);
+    public Sandbox(FixedWorld WORLD, int WIDTH, int HEIGHT, boolean FULLSCREEN, boolean USE_P2D) {
+        super(WORLD, WIDTH, HEIGHT, FULLSCREEN, USE_P2D);
     }
 
     @Override
@@ -24,11 +22,11 @@ public class Sandbox extends Game {
 
     @Override
     public void updateLoop(double dt) {
-        world.update(dt);
+        WORLD.update(dt);
     }
 
     @Override
     public void drawLoop() {
-
+        WORLD.render();
     }
 }

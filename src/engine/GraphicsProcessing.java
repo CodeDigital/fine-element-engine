@@ -39,6 +39,7 @@ public class GraphicsProcessing extends PApplet implements GraphicSystem{
     }
 
     public void setup() {
+        noSmooth();
         if(USE_P2D){
             hint(DISABLE_TEXTURE_MIPMAPS);
             ((PGraphicsOpenGL)g).textureSampling(2);

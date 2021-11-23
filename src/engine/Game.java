@@ -1,8 +1,10 @@
 package engine;
 
+import engine.containers.Grid;
 import engine.math.XMath;
 
 public abstract class Game {
+    public final Grid WORLD;
     private final double FPS = 60;
     private final double DT = 1 / FPS;
     private double frameStart;
@@ -11,15 +13,17 @@ public abstract class Game {
     public final int WIDTH, HEIGHT;
     public final boolean FULLSCREEN, USE_P2D;
 
-    public Game(int WIDTH, int HEIGHT, boolean FULLSCREEN, boolean USE_P2D) {
-
-        this.frameStart = frameStart;
+    public Game(Grid world, int WIDTH, int HEIGHT,
+                boolean FULLSCREEN, boolean USE_P2D) {
+        this.WORLD = world;
         this.WIDTH = WIDTH;
         this.HEIGHT = HEIGHT;
         this.FULLSCREEN = FULLSCREEN;
         this.USE_P2D = USE_P2D;
-        Graphics.start(this, WIDTH, HEIGHT, FULLSCREEN, USE_P2D);
+    }
 
+    public void start(){
+        Graphics.start(this, WIDTH, HEIGHT, FULLSCREEN, USE_P2D);
     }
 
     public abstract void setup();

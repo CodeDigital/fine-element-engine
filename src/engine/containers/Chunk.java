@@ -20,9 +20,11 @@ public class Chunk implements Renderable, Steppable {
     private int residualFramesUpdated = TOTAL_FRAMES_UPDATED;
     private boolean updated = false;
 
-    public Chunk(Grid world, int WIDTH) {
+    public Chunk(Grid world, V2D location) {
         cells = new Cell[WIDTH][WIDTH];
-        texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
+        this.location = location;
+        this.world = world;
+        clear();
     }
 
     public void stepPre(double dt, V2D cellLocation){
@@ -58,10 +60,14 @@ public class Chunk implements Renderable, Steppable {
     @Override
     public void stepPost(double dt) {
         if(updated){
-            residualFramesUpdated = TOTAL_FRAMES_UPDATED;
+            resetUpdated();
         }else{
             residualFramesUpdated--;
         }
+    }
+
+    public void resetUpdated(){
+        residualFramesUpdated = TOTAL_FRAMES_UPDATED;
     }
 
     public V2D getRelativeIJ(V2D cellLocation){
@@ -72,11 +78,24 @@ public class Chunk implements Renderable, Steppable {
     public void render() {
         if(updated){
             V2D showLocation = location.multiply(world.CELL_WIDTH);
+            double showSize = WIDTH * Cell.WIDTH;
+
+            if(texture == null){
+                texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
+            }
+
+            Graphics.G().imageMode(PConstants.CORNER);
+            Graphics.G().image(texture, (float) showLocation.X, (float) showLocation.Y, (float) showSize, (float) showSize);
         }
     }
 
     public void setPixel(V2D pixel, int colour) {
-        V2D ij = pixel.subtract(location.multiply(WIDTH));
+        V2D ij = getRelativeIJ(pixel);
+
+        if(texture == null){
+            texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
+        }
+
         texture.loadPixels();
         texture.pixels[(int) (ij.Y * WIDTH + ij.X)] = colour;
     }
@@ -87,6 +106,17 @@ public class Chunk implements Renderable, Steppable {
             return cells[(int) ij.Y][(int) ij.X];
         }else{
             return world.getCell(at);
+        }
+    }
+
+    public void clear(){
+        cells = new Cell[WIDTH][WIDTH];
+        for(int j = 0; j < WIDTH; j++){
+            for(int i = 0; i < WIDTH; i++){
+                V2D pixelLocation = location.multiply(WIDTH).addX(i).addY(j);
+                cells[j][i] = new Cell(this, pixelLocation);
+                System.out.println("Test");
+            }
         }
     }
 

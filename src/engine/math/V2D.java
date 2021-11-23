@@ -129,4 +129,9 @@ public class V2D implements Mathable<V2D>{
     public MAT22 getRotation(){
         return new MAT22(getAngle());
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%.2f, %.2f)", X, Y);
+    }
 }
