@@ -3,6 +3,7 @@ package engine.containers;
 import engine.Graphics;
 import engine.Renderable;
 import engine.Steppable;
+import engine.elements.Sand;
 import engine.math.V2D;
 import processing.core.PConstants;
 import processing.core.PImage;
@@ -18,7 +19,7 @@ public class Chunk implements Renderable, Steppable {
 
     private final int TOTAL_FRAMES_UPDATED = 3;
     private int residualFramesUpdated = TOTAL_FRAMES_UPDATED;
-    private boolean updated = false;
+    private boolean updated = true;
 
     public Chunk(Grid world, V2D location) {
         cells = new Cell[WIDTH][WIDTH];
@@ -79,9 +80,12 @@ public class Chunk implements Renderable, Steppable {
         if(updated){
             V2D showLocation = location.multiply(world.CELL_WIDTH);
             double showSize = WIDTH * Cell.WIDTH;
+            texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
 
-            if(texture == null){
-                texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
+            for(Cell[] row:cells){
+                for(Cell c:row){
+                    c.render();
+                }
             }
 
             Graphics.G().imageMode(PConstants.CORNER);
@@ -115,7 +119,7 @@ public class Chunk implements Renderable, Steppable {
             for(int i = 0; i < WIDTH; i++){
                 V2D pixelLocation = location.multiply(WIDTH).addX(i).addY(j);
                 cells[j][i] = new Cell(this, pixelLocation);
-                System.out.println("Test");
+                cells[j][i].setElement(new Sand(cells[j][i]));
             }
         }
     }
@@ -126,5 +130,33 @@ public class Chunk implements Renderable, Steppable {
 
         return (ij.X >= 0 && ij.X < WIDTH &&
                 ij.Y >= 0 && ij.Y < WIDTH);
+    }
+
+    public V2D getLocation() {
+        return location;
+    }
+
+    public Cell[][] getCells() {
+        return cells;
+    }
+
+    public PImage getTexture() {
+        return texture;
+    }
+
+    public Grid getWorld() {
+        return world;
+    }
+
+    public int getTOTAL_FRAMES_UPDATED() {
+        return TOTAL_FRAMES_UPDATED;
+    }
+
+    public int getResidualFramesUpdated() {
+        return residualFramesUpdated;
+    }
+
+    public boolean isUpdated() {
+        return updated;
     }
 }

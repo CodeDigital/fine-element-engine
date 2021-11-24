@@ -18,9 +18,9 @@ public abstract class Powder extends Solid{
     public void stepFSS(double dt) {
 
         V2D fssDown = V2D.CARDINALS[2];
-        V2D down = cell.getDirection().multiply(fssDown).add(cell.getLocation());
+        V2D down = cell.getDirection().multiply(fssDown).add(cell.LOCATION);
         V2D fssRight = V2D.CARDINALS[1];
-        V2D right = cell.getDirection().multiply(fssRight).add(cell.getLocation());
+        V2D right = cell.getDirection().multiply(fssRight).add(cell.LOCATION);
 
         if(cell.canSwap(down)){
             cell.swap(down);

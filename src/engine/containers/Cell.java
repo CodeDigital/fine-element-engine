@@ -22,7 +22,6 @@ public class Cell implements Renderable, Steppable {
     private boolean updated = false;
 
     public Cell(Chunk CHUNK, V2D LOCATION) {
-        System.out.println(" test ");
         this.CHUNK = CHUNK;
         this.LOCATION = LOCATION;
     }
@@ -63,6 +62,7 @@ public class Cell implements Renderable, Steppable {
     }
 
     public boolean canSwap(Cell with){
+        if(with == null) return false;
         if(with.isUpdated()) return false;
         if(with.element != null){
             if(with.element.isStatic()) return false;
@@ -81,11 +81,13 @@ public class Cell implements Renderable, Steppable {
     @Override
     public void render() {
 
+        System.out.println("test");
+
         if(updated){
             if(element == null){
-                CHUNK.setPixel(LOCATION, Graphics.G().color(0));
+                CHUNK.setPixel(LOCATION, Graphics.G().color(255));
             }else{
-                CHUNK.setPixel(LOCATION, element.getColour());
+                CHUNK.setPixel(LOCATION, element.getColour().get());
             }
         }
 
@@ -101,6 +103,10 @@ public class Cell implements Renderable, Steppable {
 
     public MAT22 getDirection() {
         return direction;
+    }
+
+    public void setDirection(MAT22 direction) {
+        this.direction = direction;
     }
 
     public boolean isUpdated() {

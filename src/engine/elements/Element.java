@@ -1,5 +1,6 @@
 package engine.elements;
 
+import engine.Colour;
 import engine.Steppable;
 import engine.containers.Cell;
 import engine.elements.rules.ChanceThreshold;
@@ -11,7 +12,7 @@ public abstract class Element implements Steppable {
 
     // Cell and showing info
     protected Cell cell;
-    protected int colour;
+    protected Colour colour;
 
     // Translational Info
     protected V2D acceleration = V2D.ZERO;
@@ -93,7 +94,7 @@ public abstract class Element implements Steppable {
         this.cell = cell;
     }
 
-    public int getColour() {
+    public Colour getColour() {
         return colour;
     }
 

@@ -27,6 +27,7 @@ public class Sandbox extends Game {
 
     @Override
     public void drawLoop() {
+        System.out.println("tewst");
         WORLD.render();
     }
 }
