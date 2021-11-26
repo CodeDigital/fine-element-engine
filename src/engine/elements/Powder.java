@@ -1,6 +1,6 @@
 package engine.elements;
 
-import engine.containers.Cell;
+import engine.Debug;
 import engine.elements.rules.Chance;
 import engine.math.V2D;
 
@@ -10,12 +10,14 @@ public abstract class Powder extends Solid{
     public boolean fssFreefalling = true;
     public Chance fssSpread = new Chance(1);
 
-    public Powder(String TYPE, Cell cell) {
-        super(TYPE, cell);
+    public Powder(String TYPE) {
+        super(TYPE);
     }
 
     @Override
     public void stepFSS(double dt) {
+
+        assert cell != null;
 
         V2D fssDown = V2D.CARDINALS[2];
         V2D down = cell.getDirection().multiply(fssDown).add(cell.LOCATION);

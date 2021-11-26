@@ -49,10 +49,9 @@ public abstract class Element implements Steppable {
     protected String type_burned;
     protected ChanceThreshold<Double> chance_burn;
 
-    public Element(String MATTER, String TYPE, Cell cell) {
+    public Element(String MATTER, String TYPE) {
         this.MATTER = MATTER;
         this.TYPE = TYPE;
-        this.cell = cell;
     }
 
     @Override
@@ -79,9 +78,9 @@ public abstract class Element implements Steppable {
         iMass = (mass == 0 ? 0:1/mass);
     }
 
-    public static Element spawn(String type, Cell container){
+    public static Element spawn(String type){
         switch (type){
-            case ElementData.ELEMENT_SAND: return new Sand(container);
+            case ElementData.ELEMENT_SAND: return new Sand();
             default: return null;
         }
     }

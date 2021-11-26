@@ -1,5 +1,6 @@
 package engine.containers;
 
+import engine.Debug;
 import engine.Renderable;
 import engine.math.V2D;
 import engine.math.XMath;
@@ -20,9 +21,9 @@ public abstract class Grid implements Renderable {
 
     public void update(double dt) {
         for(int i = 0; i < 4; i++){
-            System.out.println("Step " + i);
             updateStep(dt, i);
         }
+        System.out.println();
     }
 
     private int getIndexStart(int d, int offset, int max, boolean alternate){
@@ -196,6 +197,20 @@ public abstract class Grid implements Renderable {
             }
 
         }
+    }
+
+    @Override
+    public void render() {
+        for(Chunk[] row:chunks){
+            for(Chunk c:row){
+                c.render();
+            }
+        }
+    }
+
+    public abstract Cell getCell(V2D at);
+    public abstract V2D getChunkLocation(V2D cellLocation);
+}
 
 /**
  //
@@ -272,18 +287,3 @@ public abstract class Grid implements Renderable {
  //
  //        }
  */
-    }
-
-    @Override
-    public void render() {
-        System.out.println("TEST");
-        for(Chunk[] row:chunks){
-            for(Chunk c:row){
-                c.render();
-            }
-        }
-    }
-
-    public abstract Cell getCell(V2D at);
-    public abstract V2D getChunkLocation(V2D cellLocation);
-}

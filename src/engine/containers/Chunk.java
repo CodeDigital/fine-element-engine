@@ -77,30 +77,26 @@ public class Chunk implements Renderable, Steppable {
 
     @Override
     public void render() {
-        if(updated){
-            V2D showLocation = location.multiply(world.CELL_WIDTH);
-            double showSize = WIDTH * Cell.WIDTH;
-            texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
+        double showSize = WIDTH * Cell.getWidth();
+        V2D showLocation = location.multiply(showSize);
 
-            for(Cell[] row:cells){
-                for(Cell c:row){
-                    c.render();
+        if(updated){
+            texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
+            texture.loadPixels();
+            for(int j = 0; j < WIDTH; j++){
+                for(int i = 0; i < WIDTH; i++){
+                    texture.pixels[j*WIDTH + i] = cells[j][i].getElement().getColour().asInt();
                 }
             }
-
-            Graphics.G().imageMode(PConstants.CORNER);
-            Graphics.G().image(texture, (float) showLocation.X, (float) showLocation.Y, (float) showSize, (float) showSize);
+            texture.updatePixels();
         }
+
+        Graphics.G().imageMode(PConstants.CORNER);
+        Graphics.G().image(texture, (float) showLocation.X, (float) showLocation.Y, (float) showSize, (float) showSize);
     }
 
     public void setPixel(V2D pixel, int colour) {
         V2D ij = getRelativeIJ(pixel);
-
-        if(texture == null){
-            texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
-        }
-
-        texture.loadPixels();
         texture.pixels[(int) (ij.Y * WIDTH + ij.X)] = colour;
     }
 
@@ -119,7 +115,7 @@ public class Chunk implements Renderable, Steppable {
             for(int i = 0; i < WIDTH; i++){
                 V2D pixelLocation = location.multiply(WIDTH).addX(i).addY(j);
                 cells[j][i] = new Cell(this, pixelLocation);
-                cells[j][i].setElement(new Sand(cells[j][i]));
+                cells[j][i].setElement(new Sand());
             }
         }
     }

@@ -1,5 +1,6 @@
 package engine.containers;
 
+import engine.Debug;
 import engine.Graphics;
 import engine.Renderable;
 import engine.Steppable;
@@ -7,11 +8,12 @@ import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.math.MAT22;
 import engine.math.V2D;
+import engine.math.XMath;
 import processing.core.PConstants;
 
-public class Cell implements Renderable, Steppable {
+public class Cell implements Steppable {
 
-    public static final double WIDTH = 5;
+    private static double width = 1;
 
     // Associations
     public final Chunk CHUNK;
@@ -49,11 +51,10 @@ public class Cell implements Renderable, Steppable {
 
     public void swap(Cell with){
         Element prev = this.element;
+        Element next = with.getElement();
+        with.setElement(prev);
+        setElement(next);
         prev.setCell(with);
-        this.element = with.getElement();
-        this.element.setCell(this);
-        with.setUpdated(true);
-        setUpdated(true);
     }
 
     public void swap(V2D with){
@@ -78,27 +79,14 @@ public class Cell implements Renderable, Steppable {
         return canSwap(cellWith);
     }
 
-    @Override
-    public void render() {
-
-        System.out.println("test");
-
-        if(updated){
-            if(element == null){
-                CHUNK.setPixel(LOCATION, Graphics.G().color(255));
-            }else{
-                CHUNK.setPixel(LOCATION, element.getColour().get());
-            }
-        }
-
-    }
-
     public Element getElement() {
         return element;
     }
 
     public void setElement(Element element) {
         this.element = element;
+        this.element.setCell(this);
+        setUpdated(true);
     }
 
     public MAT22 getDirection() {
@@ -115,5 +103,13 @@ public class Cell implements Renderable, Steppable {
 
     public void setUpdated(boolean updated) {
         this.updated = updated;
+    }
+
+    public static double getWidth() {
+        return width;
+    }
+
+    public static void setWidth(double width) {
+        Cell.width = width;
     }
 }

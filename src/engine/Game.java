@@ -41,6 +41,7 @@ public abstract class Game {
             accumulator -= (DT / timeDilation);
         }
 
+        Debug.print("Reached Draw Loop", this.getClass().getName(), 44);
         drawLoop();
     }
 

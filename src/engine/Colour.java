@@ -17,7 +17,7 @@ public class Colour {
         A = 255;
     }
 
-    public int get(){
+    public int asInt(){
         return Graphics.G().color((float) R, (float) G, (float) B, (float) A);
     }
 }

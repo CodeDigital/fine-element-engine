@@ -150,6 +150,11 @@ public class XMath {
 
         return line;
     }
+
+    public static double map(double val, double lo, double hi, double mapLo, double mapHi) {
+        double frac = (val - lo) / (hi - lo);
+        return frac * (mapHi - mapLo) + mapLo;
+    }
 }
 
 

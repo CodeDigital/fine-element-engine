@@ -1,14 +1,14 @@
 import engine.Game;
 import engine.Graphics;
 import engine.containers.FixedWorld;
-import engine.containers.Grid;
 
 public class Sandbox extends Game {
 
     public static void main(String[] args) {
-        FixedWorld world = new FixedWorld(10,10);
+        FixedWorld world = new FixedWorld(20,10);
         Sandbox s = new Sandbox(world, 1280, 720, false, false);
         s.start();
+        world.setCellWidth();
     }
 
     public Sandbox(FixedWorld WORLD, int WIDTH, int HEIGHT, boolean FULLSCREEN, boolean USE_P2D) {
@@ -27,7 +27,7 @@ public class Sandbox extends Game {
 
     @Override
     public void drawLoop() {
-        System.out.println("tewst");
+        Graphics.G().background(0);
         WORLD.render();
     }
 }
