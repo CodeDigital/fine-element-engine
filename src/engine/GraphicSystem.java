@@ -2,10 +2,11 @@ package engine;
 
 public interface GraphicSystem {
 
-    public void draw();
-    public void settings();
-    public void setup();
+    void draw();
+    void settings();
+    void setup();
 
-    public void noStroke();
-    public int color(int gray);
+    void noStroke();
+    int color(int gray);
+
 }

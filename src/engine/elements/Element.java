@@ -72,7 +72,15 @@ public abstract class Element implements Steppable {
 
     }
 
-    private void setMassData(double density){
+    public boolean checkAndSwap(V2D to){
+        if(cell.canSwap(to)){
+            cell.swap(to);
+            return true;
+        }
+        return false;
+    }
+
+    protected void setMassData(double density){
         this.density = density;
         mass = METRIC_VOLUME * density;
         iMass = (mass == 0 ? 0:1/mass);
@@ -81,6 +89,7 @@ public abstract class Element implements Steppable {
     public static Element spawn(String type){
         switch (type){
             case ElementData.ELEMENT_SAND: return new Sand();
+            case ElementData.ELEMENT_AIR: return new Air();
             default: return null;
         }
     }

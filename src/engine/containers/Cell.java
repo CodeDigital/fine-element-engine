@@ -31,22 +31,30 @@ public class Cell implements Steppable {
     @Override
     public void stepPre(double dt) {
         updated = false;
-        if(element != null) element.stepPre(dt);
+        if(element == null) return;
+        element.stepPre(dt);
     }
 
     @Override
     public void stepPhysics(double dt) {
-        if(element != null) element.stepPhysics(dt);
+        if(!CHUNK.isActive()) return;
+        if(element == null) return;
+        if(updated) return;
+        element.stepPhysics(dt);
     }
 
     @Override
     public void stepFSS(double dt) {
-        if(element != null) element.stepFSS(dt);
+        if(!CHUNK.isActive()) return;
+        if(element == null) return;
+        if(updated) return;
+        element.stepFSS(dt);
     }
 
     @Override
     public void stepPost(double dt) {
-        if(element != null) element.stepPost(dt);
+        if(element == null) return;
+        element.stepPost(dt);
     }
 
     public void swap(Cell with){
@@ -84,9 +92,12 @@ public class Cell implements Steppable {
     }
 
     public void setElement(Element element) {
+        System.out.println(element.TYPE);
         this.element = element;
         this.element.setCell(this);
         setUpdated(true);
+        CHUNK.setActive(true);
+        CHUNK.resetUpdated();
     }
 
     public MAT22 getDirection() {

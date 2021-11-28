@@ -54,6 +54,11 @@ public class V2D implements Mathable<V2D>{
         return new V2D(rhs.X + X, rhs.Y + Y);
     }
 
+    @Override
+    public V2D add(double rhs) {
+        return new V2D(rhs + X, rhs + Y);
+    }
+
     public V2D addX(double dx){
         return new V2D(X + dx, Y);
     }
@@ -79,6 +84,10 @@ public class V2D implements Mathable<V2D>{
     @Override
     public V2D round() {
         return new V2D(Math.round(X), Math.round(Y));
+    }
+
+    public V2D asInt() {
+        return new V2D((int) X, (int) Y);
     }
 
     @Override

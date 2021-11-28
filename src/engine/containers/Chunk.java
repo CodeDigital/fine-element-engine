@@ -1,9 +1,11 @@
 package engine.containers;
 
+import engine.Colour;
 import engine.Graphics;
 import engine.Renderable;
 import engine.Steppable;
-import engine.elements.Sand;
+import engine.elements.Element;
+import engine.elements.ElementData;
 import engine.math.V2D;
 import processing.core.PConstants;
 import processing.core.PImage;
@@ -20,6 +22,7 @@ public class Chunk implements Renderable, Steppable {
     private final int TOTAL_FRAMES_UPDATED = 3;
     private int residualFramesUpdated = TOTAL_FRAMES_UPDATED;
     private boolean updated = true;
+    private boolean active = true;
 
     public Chunk(Grid world, V2D location) {
         cells = new Cell[WIDTH][WIDTH];
@@ -65,10 +68,17 @@ public class Chunk implements Renderable, Steppable {
         }else{
             residualFramesUpdated--;
         }
+
+        if(residualFramesUpdated < 0){
+            active = false;
+        }else{
+            active = true;
+        }
     }
 
     public void resetUpdated(){
         residualFramesUpdated = TOTAL_FRAMES_UPDATED;
+        updated = true;
     }
 
     public V2D getRelativeIJ(V2D cellLocation){
@@ -80,7 +90,7 @@ public class Chunk implements Renderable, Steppable {
         double showSize = WIDTH * Cell.getWidth();
         V2D showLocation = location.multiply(showSize);
 
-        if(updated){
+        if(updated || texture == null){
             texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
             texture.loadPixels();
             for(int j = 0; j < WIDTH; j++){
@@ -93,6 +103,17 @@ public class Chunk implements Renderable, Steppable {
 
         Graphics.G().imageMode(PConstants.CORNER);
         Graphics.G().image(texture, (float) showLocation.X, (float) showLocation.Y, (float) showSize, (float) showSize);
+
+
+        Graphics.G().strokeWeight(1);
+        if(active){
+            Graphics.G().stroke(Colour.BLACK.asInt());
+        }else{
+            Graphics.G().stroke(Colour.WHITE.asInt());
+        }
+        Graphics.G().noFill();
+        Graphics.G().rectMode(PConstants.CORNER);
+        Graphics.G().rect((float) showLocation.X, (float) showLocation.Y, (float) showSize, (float) showSize);
     }
 
     public void setPixel(V2D pixel, int colour) {
@@ -115,7 +136,7 @@ public class Chunk implements Renderable, Steppable {
             for(int i = 0; i < WIDTH; i++){
                 V2D pixelLocation = location.multiply(WIDTH).addX(i).addY(j);
                 cells[j][i] = new Cell(this, pixelLocation);
-                cells[j][i].setElement(new Sand());
+                cells[j][i].setElement(Element.spawn(ElementData.ELEMENT_AIR));
             }
         }
     }
@@ -154,5 +175,13 @@ public class Chunk implements Renderable, Steppable {
 
     public boolean isUpdated() {
         return updated;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

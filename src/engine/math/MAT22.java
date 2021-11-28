@@ -39,6 +39,16 @@ public class MAT22 implements Mathable<MAT22>{
     }
 
     @Override
+    public MAT22 add(double rhs) {
+        return new MAT22(
+                M00 + rhs,
+                M01 + rhs,
+                M10 + rhs,
+                M11 + rhs
+        );
+    }
+
+    @Override
     public MAT22 subtract(MAT22 rhs) {
         return add(rhs.negative());
     }

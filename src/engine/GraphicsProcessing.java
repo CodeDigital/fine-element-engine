@@ -1,6 +1,7 @@
 package engine;
 
 import processing.core.PApplet;
+import processing.event.MouseEvent;
 import processing.opengl.PGraphicsOpenGL;
 
 public class GraphicsProcessing extends PApplet implements GraphicSystem{
@@ -50,5 +51,12 @@ public class GraphicsProcessing extends PApplet implements GraphicSystem{
 
     public void draw(){
         game.loop();
+    }
+
+    public void mousePressed(){
+        game.mousePressed();
+    }
+    public void mouseClicked(){
+        game.mouseClicked();
     }
 }

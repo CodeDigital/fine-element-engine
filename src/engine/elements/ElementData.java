@@ -19,7 +19,16 @@ public class ElementData {
     // GAS TYPES
     public static final String MATTER_GAS = "gas";
 
+    // Air
+    public static final String ELEMENT_AIR = "air";
+    public static final double ELEMENT_AIR_DENSITY = 1.2;
 
     // REACTION TYPES
     public static final String MATTER_REACTION = "reaction";
+
+    // All types in an array
+    public static final String[] ELEMENT_TYPES = {
+            ELEMENT_AIR,
+            ELEMENT_SAND
+    };
 }

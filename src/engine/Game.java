@@ -47,6 +47,8 @@ public abstract class Game {
 
     public abstract void updateLoop(double dt);
     public abstract void drawLoop();
+    public void mousePressed(){}
+    public void mouseClicked(){}
 
     public double getCurrentTime(){
         return (double) System.currentTimeMillis() / 1000;

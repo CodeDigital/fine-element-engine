@@ -20,10 +20,22 @@ public abstract class Grid implements Renderable {
     }
 
     public void update(double dt) {
+
+        for(Chunk[] row:chunks){
+            for(Chunk c:row){
+                c.stepPre(dt);
+            }
+        }
+
         for(int i = 0; i < 4; i++){
             updateStep(dt, i);
         }
-        System.out.println();
+
+        for(Chunk[] row:chunks){
+            for(Chunk c:row){
+                c.stepPost(dt);
+            }
+        }
     }
 
     private int getIndexStart(int d, int offset, int max, boolean alternate){
@@ -210,6 +222,10 @@ public abstract class Grid implements Renderable {
 
     public abstract Cell getCell(V2D at);
     public abstract V2D getChunkLocation(V2D cellLocation);
+
+    public V2D getIJFromXY(V2D point) {
+        return point.multiply(1 / Cell.getWidth());
+    }
 }
 
 /**

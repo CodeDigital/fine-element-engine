@@ -3,6 +3,7 @@ package engine.elements;
 import engine.Debug;
 import engine.elements.rules.Chance;
 import engine.math.V2D;
+import engine.math.XMath;
 
 public abstract class Powder extends Solid{
 
@@ -21,13 +22,8 @@ public abstract class Powder extends Solid{
 
         V2D fssDown = V2D.CARDINALS[2];
         V2D down = cell.getDirection().multiply(fssDown).add(cell.LOCATION);
-        V2D fssRight = V2D.CARDINALS[1];
-        V2D right = cell.getDirection().multiply(fssRight).add(cell.LOCATION);
 
-        if(cell.canSwap(down)){
-            cell.swap(down);
-            return;
-        }
+        if(checkAndSwap(down)) return;
 
         if(!fssFreefalling){
             if(cell.isUpdated()) fssFreefalling = true;
@@ -36,7 +32,18 @@ public abstract class Powder extends Solid{
 
         if(!fssSpread.check()) return;
 
+        V2D fssRight = V2D.CARDINALS[1];
+        V2D downRight = cell.getDirection().multiply(fssRight).add(down);
+        V2D fssLeft = V2D.CARDINALS[3];
+        V2D downLeft = cell.getDirection().multiply(fssLeft).add(down);
 
+        if(XMath.randomBoolean()){
+            if(checkAndSwap(downLeft)) return;
+            if(checkAndSwap(downRight)) return;
+        }else{
+            if(checkAndSwap(downRight)) return;
+            if(checkAndSwap(downLeft)) return;
+        }
 
     }
 }

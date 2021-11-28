@@ -31,7 +31,7 @@ public class Debug {
         if(lastMSG.equals(msg) && lastFrom.equals(from) && lastLine == line){
             lastCount ++;
             if(lastCount % 10 == 0){
-                System.out.print(0);
+                System.out.print("0");
             }
         }else{
             System.out.println();
