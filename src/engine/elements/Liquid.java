@@ -30,7 +30,7 @@ public abstract class Liquid extends Fluid{
 
         assert cell != null;
 
-        double range = 5 * Math.random();
+        double range = 10 * Math.random();
 
         V2D fssDown = V2D.CARDINALS[2];
         V2D down = cell.applyDirection(fssDown).add(cell.LOCATION);

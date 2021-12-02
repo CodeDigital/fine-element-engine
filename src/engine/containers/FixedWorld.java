@@ -48,6 +48,11 @@ public class FixedWorld extends Grid{
                 chunks[j][i] = new Chunk(this, new V2D(i, j));
             }
         }
+        for(Chunk[] row:chunks){
+            for(Chunk c:row){
+                c.initialize();
+            }
+        }
     }
 
     private boolean inBounds(V2D at) {

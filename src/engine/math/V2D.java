@@ -81,6 +81,12 @@ public class V2D implements Mathable<V2D>{
         return new V2D(X * scalar, Y * scalar);
     }
 
+    public V2D pmultiply(double scalar) {
+        System.out.println("Scalar: " + scalar);
+        System.out.println(this + " -> " + new V2D(X * scalar, Y * scalar));
+        return new V2D(X * scalar, Y * scalar);
+    }
+
     @Override
     public V2D round() {
         return new V2D(Math.round(X), Math.round(Y));
@@ -117,6 +123,12 @@ public class V2D implements Mathable<V2D>{
 
     public double magnitude(){
         return Math.sqrt(magnitudeSquared());
+    }
+
+    public V2D normal(){
+        double mag = magnitude();
+        if(mag == 0) return ZERO;
+        return multiply(1/magnitude());
     }
 
     @Override

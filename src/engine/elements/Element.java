@@ -65,23 +65,32 @@ public abstract class Element implements Steppable {
 
     @Override
     public void stepPre(double dt) {
-        velocity = velocity.add(cell.getTotalForce().multiply(dt));
-        double sqVelMag = velocity.magnitudeSquared();
-        double sqSpeedMax = ElementData.SPEED_MAX * ElementData.SPEED_MAX;
-        if(sqVelMag > sqSpeedMax){
-            velocity = velocity.multiply(sqSpeedMax / sqVelMag);
-        }
+        applyCellForce(dt);
     }
 
     @Override
     public void stepPhysics(double dt) {
-        V2D newLocation = cell.LOCATION.add(velocity.multiply(dt / Element.METRIC_WIDTH));
-        steppingCheckAndSwap(newLocation);
+        movePhysics(dt);
     }
 
     @Override
     public void stepPost(double dt) {
         if(!cell.isUpdated()) velocity = velocity.multiply(ElementData.STATIC_FRICTION);
+    }
+
+    public void applyCellForce(double dt){
+        velocity = velocity.add(cell.getTotalForce().multiply(dt));
+        double sqVelMag = velocity.magnitudeSquared();
+        double sqSpeedMax = ElementData.SPEED_MAX * ElementData.SPEED_MAX;
+        if(sqVelMag > sqSpeedMax){
+//            velocity = velocity.multiply(sqSpeedMax / sqVelMag);
+            velocity = V2D.ZERO;
+        }
+    }
+
+    public boolean movePhysics(double dt){
+        V2D newLocation = cell.LOCATION.add(velocity.multiply(dt / Element.METRIC_WIDTH));
+        return steppingCheckAndSwap(newLocation);
     }
 
     public boolean steppingCheckAndSwap(V2D to){
@@ -141,6 +150,10 @@ public abstract class Element implements Steppable {
 
     public V2D getVelocity() {
         return velocity;
+    }
+
+    public void setVelocity(V2D velocity) {
+        this.velocity = velocity;
     }
 
     public double getDensity() {

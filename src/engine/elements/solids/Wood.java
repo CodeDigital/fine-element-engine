@@ -2,8 +2,6 @@ package engine.elements.solids;
 
 import engine.Colour;
 import engine.containers.Cell;
-import engine.containers.Chunk;
-import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.elements.StaticElement;
 import engine.math.XMath;

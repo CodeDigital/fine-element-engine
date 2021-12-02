@@ -10,6 +10,8 @@ public class Water extends Liquid {
     public Water(){
         super(ElementData.ELEMENT_WATER, ElementData.ELEMENT_WATER_FSS_SPREAD);
         setMassData(ElementData.ELEMENT_WATER_DENSITY);
+//        setFluidData(ElementData.ELEMENT_WATER_DENSITY, XMath.SQRT_2 + XMath.EPSILON, 0);
+        setFluidData(0, XMath.SQRT_2 + XMath.EPSILON, 0);
 
         double noiseG = Math.random();
         double noiseB = Math.random();

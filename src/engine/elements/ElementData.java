@@ -5,7 +5,7 @@ import engine.containers.Chunk;
 public class ElementData {
 
     // Constraints
-    public static final double SPEED_MAX = 2 * Chunk.WIDTH;
+    public static final double SPEED_MAX = Chunk.WIDTH;
     public static final double STATIC_FRICTION = 0.95;
 
 

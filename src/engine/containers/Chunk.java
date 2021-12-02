@@ -30,6 +30,14 @@ public class Chunk implements Renderable, Steppable {
         clear();
     }
 
+    public void initialize() {
+        for(Cell[] row:cells){
+            for(Cell c:row){
+                c.initialize();
+            }
+        }
+    }
+
     @Override
     public void stepPre(double dt) {
         updated = false;

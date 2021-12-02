@@ -17,6 +17,7 @@ public class Cell implements Steppable {
     public final Chunk CHUNK;
     public final V2D LOCATION;
     public final HashSet<Chunk> CHUNK_BORDERS = new HashSet<>();
+    public final ArrayList<Cell> CELL_BORDERS = new ArrayList<>();
     private Element element;
 
     // forces and gravity
@@ -30,15 +31,20 @@ public class Cell implements Steppable {
         this.LOCATION = LOCATION;
 
         direction = CHUNK.WORLD.getGravity().getRotation();
+    }
 
+    public void initialize(){
         // get the bordering chunks
-        for(V2D card:V2D.OCTALS){
-            V2D loc = card.multiply(Chunk.WIDTH/2).add(this.LOCATION);
-            Chunk c = CHUNK.WORLD.getChunk(loc);
-            if(c != null) CHUNK_BORDERS.add(CHUNK.WORLD.getChunk(loc));
+        for(V2D oct:V2D.OCTALS){
+            V2D loc = oct.multiply(Chunk.WIDTH/2).add(LOCATION);
+            Chunk ch = CHUNK.WORLD.getChunk(loc);
+            if(ch != null) CHUNK_BORDERS.add(ch);
+
+            loc = oct.add(LOCATION);
+            Cell ce = CHUNK.getCell(loc);
+            CELL_BORDERS.add(ce);
         }
         CHUNK_BORDERS.add(CHUNK);
-
     }
 
     @Override
@@ -90,8 +96,8 @@ public class Cell implements Steppable {
         if(with.isUpdated()) return false;
         if(with.element != null){
             if(with.element.isStatic()) return false;
-            if(with.element.MATTER.equals(element.MATTER) &&
-                    element.MATTER.equals(ElementData.MATTER_SOLID)) return false;
+            if(with.element.MATTER == element.MATTER &&
+                    element.MATTER == ElementData.MATTER_SOLID) return false;
             if(with.element.getDensity() < element.getDensity()) return true;
         }
         return false;
