@@ -1,6 +1,8 @@
 package engine.elements.solids;
 
 import engine.Colour;
+import engine.containers.Cell;
+import engine.containers.Chunk;
 import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.elements.StaticElement;
@@ -21,4 +23,12 @@ public class Wood extends StaticElement {
         colour = new Colour(r, g, b);
     }
 
+    @Override
+    public void setCell(Cell cell) {
+        super.setCell(cell);
+
+        if(cell.LOCATION.Y % 3 == 0){
+            colour = colour.darken(Math.random() * 30);
+        }
+    }
 }

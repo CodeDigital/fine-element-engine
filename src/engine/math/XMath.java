@@ -107,6 +107,7 @@ public class XMath {
             }
         }
 
+        line.add(to);
         return line;
     }
 
@@ -148,6 +149,7 @@ public class XMath {
             }
         }
 
+        line.add(to);
         return line;
     }
 

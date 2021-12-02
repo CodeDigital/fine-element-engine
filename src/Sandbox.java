@@ -14,7 +14,7 @@ public class Sandbox extends Game {
     private int brushSize = 10;
 
     public static void main(String[] args) {
-        FixedWorld world = new FixedWorld(10,5);
+        FixedWorld world = new FixedWorld(16,10);
         Sandbox s = new Sandbox(world, 1280, 720, false, false);
         s.start();
         world.setCellWidth();
@@ -38,12 +38,11 @@ public class Sandbox extends Game {
     @Override
     public void updateLoop(double dt) {
         WORLD.update(dt);
-
-        if(Graphics.G().mousePressed) mousePressed();
     }
 
     @Override
     public void drawLoop() {
+        if(Graphics.G().mousePressed) mousePressed();
         Graphics.G().background(0);
         WORLD.render();
         elementBar.render();

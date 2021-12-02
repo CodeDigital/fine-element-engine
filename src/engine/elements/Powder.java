@@ -32,7 +32,7 @@ public abstract class Powder extends Solid{
         V2D fssDown = V2D.CARDINALS[2];
         V2D down = cell.applyDirection(fssDown).add(cell.LOCATION);
 
-        if(checkAndSwap(down)) return;
+        if(steppingCheckAndSwap(down)) return;
 
         if(!fssFreefalling){
             if(cell.isUpdated()) fssFreefalling = true;
@@ -47,11 +47,11 @@ public abstract class Powder extends Solid{
         V2D downLeft = cell.applyDirection(fssLeft).add(down);
 
         if(XMath.randomBoolean()){
-            if(checkAndSwap(downLeft)) return;
-            if(checkAndSwap(downRight)) return;
+            if(steppingCheckAndSwap(downLeft)) return;
+            if(steppingCheckAndSwap(downRight)) return;
         }else{
-            if(checkAndSwap(downRight)) return;
-            if(checkAndSwap(downLeft)) return;
+            if(steppingCheckAndSwap(downRight)) return;
+            if(steppingCheckAndSwap(downLeft)) return;
         }
 
     }

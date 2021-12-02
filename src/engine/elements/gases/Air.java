@@ -20,4 +20,12 @@ public class Air extends Gas {
     @Override
     public void stepPhysics(double dt) {
     }
+
+    @Override
+    public void stepFSS(double dt) {
+    }
+
+    @Override
+    public void stepPost(double dt) {
+    }
 }

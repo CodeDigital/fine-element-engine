@@ -20,7 +20,7 @@ public class Cell implements Steppable {
     private Element element;
 
     // forces and gravity
-    private MAT22 direction = MAT22.CARDINALS[0];
+    private MAT22 direction;
     private ArrayList<V2D> forces = new ArrayList<>();
 
     private boolean updated = false;
@@ -33,11 +33,12 @@ public class Cell implements Steppable {
 
         // get the bordering chunks
         for(V2D card:V2D.OCTALS){
-            V2D loc = card.multiply(Chunk.WIDTH).add(this.LOCATION);
+            V2D loc = card.multiply(Chunk.WIDTH/2).add(this.LOCATION);
             Chunk c = CHUNK.WORLD.getChunk(loc);
             if(c != null) CHUNK_BORDERS.add(CHUNK.WORLD.getChunk(loc));
         }
         CHUNK_BORDERS.add(CHUNK);
+
     }
 
     @Override
@@ -118,7 +119,6 @@ public class Cell implements Steppable {
     }
 
     public void setElement(Element element) {
-        System.out.println(element.TYPE);
         this.element = element;
         this.element.setCell(this);
         setUpdated(true);

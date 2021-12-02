@@ -2,10 +2,11 @@ package engine.containers;
 
 import engine.Debug;
 import engine.Renderable;
+import engine.Steppable;
 import engine.math.V2D;
 import engine.math.XMath;
 
-public abstract class Grid implements Renderable {
+public abstract class Grid implements Renderable, Steppable {
     public final int WIDTH, HEIGHT, SIZE, WIDTH_CELLS, HEIGHT_CELLS;
     protected Chunk[][] chunks;
     protected V2D gravity = V2D.CARDINALS[2].multiply(9.8);
@@ -19,23 +20,255 @@ public abstract class Grid implements Renderable {
         chunks = new Chunk[HEIGHT][WIDTH];
     }
 
-    public void update(double dt) {
-
+    @Override
+    public void stepPre(double dt) {
         for(Chunk[] row:chunks){
             for(Chunk c:row){
                 c.stepPre(dt);
             }
         }
+    }
 
-        for(int i = 0; i < 4; i++){
-            updateStep(dt, i);
+    @Override
+    public void stepPhysics(double dt) {
+        int ox = (int) XMath.random(0, Chunk.WIDTH);
+        int oy = (int) XMath.random(0, Chunk.WIDTH);
+
+        boolean startOnX = XMath.randomBoolean();
+        boolean alternate = true;
+
+        int dx = XMath.randomBoolean() ? 1:-1;
+        int dy = XMath.randomBoolean() ? 1:-1;
+
+        if(startOnX){
+
+            int cx = getIndexStart(dx, ox, HEIGHT_CELLS, false);
+
+            // iterate over x
+            while(cx >= 0 && cx < HEIGHT_CELLS){
+
+                int cy = getIndexStart(dy, oy, WIDTH_CELLS, alternate);
+
+                // iterate over y
+                while(cy >= 0 && cy < WIDTH_CELLS){
+                    Cell c = getCell(new V2D(cy, cx));
+                    c.stepPhysics(dt);
+
+                    cy += dy;
+                    if((cy - dy * oy) % Chunk.WIDTH == 0) cy += dy * Chunk.WIDTH;
+                }
+
+                alternate = !alternate;
+                cx += dx;
+                if((cx - dx * ox) % Chunk.WIDTH == 0) alternate = !alternate;
+            }
+
+            cx = getIndexStart(dx, ox, HEIGHT_CELLS, false);
+            alternate = false;
+
+            // iterate over x
+            while(cx >= 0 && cx < HEIGHT_CELLS){
+
+                int cy = getIndexStart(dy, oy, WIDTH_CELLS, alternate);
+
+                // iterate over y
+                while(cy >= 0 && cy < WIDTH_CELLS){
+
+                    Cell c = getCell(new V2D(cy, cx));
+
+                    c.stepPhysics(dt);
+
+                    cy += dy;
+                    if((cy - dy * oy) % Chunk.WIDTH == 0) cy += dy * Chunk.WIDTH;
+                }
+
+                alternate = !alternate;
+                cx += dx;
+                if((cx - dx * ox) % Chunk.WIDTH == 0) alternate = !alternate;
+            }
+
+        }else{
+
+            int cy = getIndexStart(dy, oy, HEIGHT_CELLS, false);
+
+            // iterate over y
+            while(cy >= 0 && cy < HEIGHT_CELLS){
+
+                int cx = getIndexStart(dx, ox, WIDTH_CELLS, alternate);
+
+                // iterate over x
+                while(cx >= 0 && cx < WIDTH_CELLS){
+
+                    Cell c = getCell(new V2D(cx, cy));
+
+                    c.stepPhysics(dt);
+
+                    cx += dx;
+                    if((cx - dx * ox) % Chunk.WIDTH == 0) cx += dx * Chunk.WIDTH;
+                }
+
+                alternate = !alternate;
+                cy += dy;
+                if((cy - dy * oy) % Chunk.WIDTH == 0) alternate = !alternate;
+            }
+
+            cy = getIndexStart(dy, oy, HEIGHT_CELLS, false);
+            alternate = false;
+
+            // iterate over y
+            while(cy >= 0 && cy < HEIGHT_CELLS){
+
+                int cx = getIndexStart(dx, ox, WIDTH_CELLS, alternate);
+
+                // iterate over x
+                while(cx >= 0 && cx < WIDTH_CELLS){
+
+                    Cell c = getCell(new V2D(cx, cy));
+
+                    c.stepPhysics(dt);
+
+                    cx += dx;
+                    if((cx - dx * ox) % Chunk.WIDTH == 0) cx += dx * Chunk.WIDTH;
+                }
+
+                alternate = !alternate;
+                cy += dy;
+                if((cy - dy * oy) % Chunk.WIDTH == 0) alternate = !alternate;
+            }
+
         }
+    }
 
+    @Override
+    public void stepFSS(double dt) {
+        int ox = (int) XMath.random(0, Chunk.WIDTH);
+        int oy = (int) XMath.random(0, Chunk.WIDTH);
+
+        boolean startOnX = XMath.randomBoolean();
+        boolean alternate = true;
+
+        int dx = XMath.randomBoolean() ? 1:-1;
+        int dy = XMath.randomBoolean() ? 1:-1;
+
+        if(startOnX){
+
+            int cx = getIndexStart(dx, ox, HEIGHT_CELLS, false);
+
+            // iterate over x
+            while(cx >= 0 && cx < HEIGHT_CELLS){
+
+                int cy = getIndexStart(dy, oy, WIDTH_CELLS, alternate);
+
+                // iterate over y
+                while(cy >= 0 && cy < WIDTH_CELLS){
+                    Cell c = getCell(new V2D(cy, cx));
+                    c.stepFSS(dt);
+
+                    cy += dy;
+                    if((cy - dy * oy) % Chunk.WIDTH == 0) cy += dy * Chunk.WIDTH;
+                }
+
+                alternate = !alternate;
+                cx += dx;
+                if((cx - dx * ox) % Chunk.WIDTH == 0) alternate = !alternate;
+            }
+
+            cx = getIndexStart(dx, ox, HEIGHT_CELLS, false);
+            alternate = false;
+
+            // iterate over x
+            while(cx >= 0 && cx < HEIGHT_CELLS){
+
+                int cy = getIndexStart(dy, oy, WIDTH_CELLS, alternate);
+
+                // iterate over y
+                while(cy >= 0 && cy < WIDTH_CELLS){
+
+                    Cell c = getCell(new V2D(cy, cx));
+
+                    c.stepFSS(dt);
+
+                    cy += dy;
+                    if((cy - dy * oy) % Chunk.WIDTH == 0) cy += dy * Chunk.WIDTH;
+                }
+
+                alternate = !alternate;
+                cx += dx;
+                if((cx - dx * ox) % Chunk.WIDTH == 0) alternate = !alternate;
+            }
+
+        }else{
+
+            int cy = getIndexStart(dy, oy, HEIGHT_CELLS, false);
+
+            // iterate over y
+            while(cy >= 0 && cy < HEIGHT_CELLS){
+
+                int cx = getIndexStart(dx, ox, WIDTH_CELLS, alternate);
+
+                // iterate over x
+                while(cx >= 0 && cx < WIDTH_CELLS){
+
+                    Cell c = getCell(new V2D(cx, cy));
+
+                    c.stepFSS(dt);
+
+                    cx += dx;
+                    if((cx - dx * ox) % Chunk.WIDTH == 0) cx += dx * Chunk.WIDTH;
+                }
+
+                alternate = !alternate;
+                cy += dy;
+                if((cy - dy * oy) % Chunk.WIDTH == 0) alternate = !alternate;
+            }
+
+            cy = getIndexStart(dy, oy, HEIGHT_CELLS, false);
+            alternate = false;
+
+            // iterate over y
+            while(cy >= 0 && cy < HEIGHT_CELLS){
+
+                int cx = getIndexStart(dx, ox, WIDTH_CELLS, alternate);
+
+                // iterate over x
+                while(cx >= 0 && cx < WIDTH_CELLS){
+
+                    Cell c = getCell(new V2D(cx, cy));
+
+                    c.stepFSS(dt);
+
+                    cx += dx;
+                    if((cx - dx * ox) % Chunk.WIDTH == 0) cx += dx * Chunk.WIDTH;
+                }
+
+                alternate = !alternate;
+                cy += dy;
+                if((cy - dy * oy) % Chunk.WIDTH == 0) alternate = !alternate;
+            }
+
+        }
+    }
+
+    @Override
+    public void stepPost(double dt) {
         for(Chunk[] row:chunks){
             for(Chunk c:row){
                 c.stepPost(dt);
             }
         }
+    }
+
+    public void update(double dt) {
+
+        stepPre(dt);
+
+//        for(int i = 1; i < 3; i++){
+//            updateStep(dt, i);
+//        }
+        stepPhysics(dt);
+        stepFSS(dt);
+
+        stepPost(dt);
     }
 
     private int getIndexStart(int d, int offset, int max, boolean alternate){

@@ -150,7 +150,6 @@ public class V2D implements Mathable<V2D>{
     }
 
     public MAT22 getRotation(){
-        System.out.println(new MAT22(getAngle()));
         return new MAT22(getAngle());
     }
 

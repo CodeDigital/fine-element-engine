@@ -19,7 +19,7 @@ public class Chunk implements Renderable, Steppable {
     private PImage texture;
     public final Grid WORLD;
 
-    private final int TOTAL_FRAMES_UPDATED = 4;
+    private final int TOTAL_FRAMES_UPDATED = 10;
     private int residualFramesUpdated = TOTAL_FRAMES_UPDATED;
     private boolean updated = true;
 
@@ -33,6 +33,11 @@ public class Chunk implements Renderable, Steppable {
     @Override
     public void stepPre(double dt) {
         updated = false;
+        for(Cell[] row:cells){
+            for(Cell c:row){
+                c.stepPre(dt);
+            }
+        }
     }
 
     @Override
@@ -49,6 +54,12 @@ public class Chunk implements Renderable, Steppable {
 
         if(residualFramesUpdated < 0){
             residualFramesUpdated = -1;
+        }
+
+        for(Cell[] row:cells){
+            for(Cell c:row){
+                c.stepPost(dt);
+            }
         }
     }
 

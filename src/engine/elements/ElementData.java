@@ -1,6 +1,13 @@
 package engine.elements;
 
+import engine.containers.Chunk;
+
 public class ElementData {
+
+    // Constraints
+    public static final double SPEED_MAX = 2 * Chunk.WIDTH;
+    public static final double STATIC_FRICTION = 0.95;
+
 
     // Element Information and Types
 
@@ -27,7 +34,7 @@ public class ElementData {
 
     public static final String ELEMENT_WATER = "water";
     public static final double ELEMENT_WATER_DENSITY = 998;
-    public static final double ELEMENT_WATER_FSS_SPREAD = 0.25;
+    public static final double ELEMENT_WATER_FSS_SPREAD = 0.5;
 
     // GAS TYPES
     public static final String MATTER_GAS = "gas";

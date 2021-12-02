@@ -66,19 +66,35 @@ public abstract class Element implements Steppable {
     @Override
     public void stepPre(double dt) {
         velocity = velocity.add(cell.getTotalForce().multiply(dt));
+        double sqVelMag = velocity.magnitudeSquared();
+        double sqSpeedMax = ElementData.SPEED_MAX * ElementData.SPEED_MAX;
+        if(sqVelMag > sqSpeedMax){
+            velocity = velocity.multiply(sqSpeedMax / sqVelMag);
+        }
     }
 
     @Override
     public void stepPhysics(double dt) {
         V2D newLocation = cell.LOCATION.add(velocity.multiply(dt / Element.METRIC_WIDTH));
-        for(V2D step: XMath.bresenham(cell.LOCATION, newLocation)){
-            if(!checkAndSwap(step)) return;
-        }
+        steppingCheckAndSwap(newLocation);
     }
 
     @Override
     public void stepPost(double dt) {
+        if(!cell.isUpdated()) velocity = velocity.multiply(ElementData.STATIC_FRICTION);
+    }
 
+    public boolean steppingCheckAndSwap(V2D to){
+        boolean hasMoved = false;
+        for(V2D step:XMath.bresenham(cell.LOCATION, to)){
+            if(step.equal(cell.LOCATION)) continue;
+            if(checkAndSwap(step)){
+                hasMoved = true;
+            }else{
+                break;
+            }
+        }
+        return hasMoved;
     }
 
     public boolean checkAndSwap(V2D to){
