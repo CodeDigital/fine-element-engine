@@ -8,4 +8,8 @@ public abstract class Gas extends Fluid{
         super(ElementData.MATTER_GAS, TYPE);
     }
 
+    @Override
+    public void stepFSS(double dt) {
+
+    }
 }

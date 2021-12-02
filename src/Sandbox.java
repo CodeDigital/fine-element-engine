@@ -52,7 +52,7 @@ public class Sandbox extends Game {
     }
 
     public void renderMouse(){
-        V2D ij = WORLD.getIJFromXY(new V2D(Graphics.G().mouseX, Graphics.G().mouseY)).asInt();
+        V2D ij = WORLD.toCoordinate(new V2D(Graphics.G().mouseX, Graphics.G().mouseY)).asInt();
         Graphics.G().noFill();
         Graphics.G().strokeWeight(1);
         Graphics.G().stroke(Colour.WHITE.asInt());
@@ -71,7 +71,7 @@ public class Sandbox extends Game {
 
     @Override
     public void mousePressed() {
-        V2D ij = WORLD.getIJFromXY(new V2D(Graphics.G().mouseX, Graphics.G().mouseY));
+        V2D ij = WORLD.toCoordinate(new V2D(Graphics.G().mouseX, Graphics.G().mouseY));
         V2D ijStart = ij.add(-brushSize / 2);
         for(int i = 0; i < brushSize; i++){
             ij = ijStart;

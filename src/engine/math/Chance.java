@@ -1,4 +1,4 @@
-package engine.elements.rules;
+package engine.math;
 
 public class Chance {
 

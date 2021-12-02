@@ -1,15 +1,13 @@
 package engine.containers;
 
-import engine.Debug;
-import engine.Graphics;
-import engine.Renderable;
 import engine.Steppable;
 import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.math.MAT22;
 import engine.math.V2D;
-import engine.math.XMath;
-import processing.core.PConstants;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Cell implements Steppable {
 
@@ -18,14 +16,28 @@ public class Cell implements Steppable {
     // Associations
     public final Chunk CHUNK;
     public final V2D LOCATION;
+    public final HashSet<Chunk> CHUNK_BORDERS = new HashSet<>();
     private Element element;
-    private MAT22 direction = MAT22.CARDINALS[2];
+
+    // forces and gravity
+    private MAT22 direction = MAT22.CARDINALS[0];
+    private ArrayList<V2D> forces = new ArrayList<>();
 
     private boolean updated = false;
 
     public Cell(Chunk CHUNK, V2D LOCATION) {
         this.CHUNK = CHUNK;
         this.LOCATION = LOCATION;
+
+        direction = CHUNK.WORLD.getGravity().getRotation();
+
+        // get the bordering chunks
+        for(V2D card:V2D.OCTALS){
+            V2D loc = card.multiply(Chunk.WIDTH).add(this.LOCATION);
+            Chunk c = CHUNK.WORLD.getChunk(loc);
+            if(c != null) CHUNK_BORDERS.add(CHUNK.WORLD.getChunk(loc));
+        }
+        CHUNK_BORDERS.add(CHUNK);
     }
 
     @Override
@@ -62,7 +74,6 @@ public class Cell implements Steppable {
         Element next = with.getElement();
         with.setElement(prev);
         setElement(next);
-        prev.setCell(with);
     }
 
     public void swap(V2D with){
@@ -71,20 +82,35 @@ public class Cell implements Steppable {
     }
 
     public boolean canSwap(Cell with){
+        if(element != null){
+            if(element.isStatic()) return false;
+        }
         if(with == null) return false;
         if(with.isUpdated()) return false;
         if(with.element != null){
             if(with.element.isStatic()) return false;
-            if(with.element.MATTER == element.MATTER &&
-                    element.MATTER == ElementData.MATTER_SOLID) return false;
+            if(with.element.MATTER.equals(element.MATTER) &&
+                    element.MATTER.equals(ElementData.MATTER_SOLID)) return false;
             if(with.element.getDensity() < element.getDensity()) return true;
         }
-        return true;
+        return false;
     }
 
     public boolean canSwap(V2D with){
         Cell cellWith = CHUNK.getCell(with);
         return canSwap(cellWith);
+    }
+
+    public V2D getTotalForce(){
+        V2D out = CHUNK.WORLD.getGravity();
+        for(V2D f:forces){
+            out = out.add(f);
+        }
+        return out;
+    }
+
+    public V2D applyDirection(V2D dir){
+        return direction.multiply(dir).round();
     }
 
     public Element getElement() {
@@ -96,7 +122,10 @@ public class Cell implements Steppable {
         this.element = element;
         this.element.setCell(this);
         setUpdated(true);
-        CHUNK.setActive(true);
+
+        for(Chunk c:CHUNK_BORDERS){
+            c.resetUpdated();
+        }
         CHUNK.resetUpdated();
     }
 

@@ -6,9 +6,9 @@ import engine.math.V2D;
 import engine.math.XMath;
 
 public abstract class Grid implements Renderable {
-    public final int CELL_WIDTH = 10;
     public final int WIDTH, HEIGHT, SIZE, WIDTH_CELLS, HEIGHT_CELLS;
     protected Chunk[][] chunks;
+    protected V2D gravity = V2D.CARDINALS[2].multiply(9.8);
 
     public Grid(int WIDTH, int HEIGHT) {
         this.WIDTH = WIDTH;
@@ -221,10 +221,22 @@ public abstract class Grid implements Renderable {
     }
 
     public abstract Cell getCell(V2D at);
-    public abstract V2D getChunkLocation(V2D cellLocation);
+    public abstract Chunk getChunk(V2D at);
 
-    public V2D getIJFromXY(V2D point) {
+    public V2D toCoordinate(V2D point){
         return point.multiply(1 / Cell.getWidth());
+    }
+
+    public Chunk[][] getChunks() {
+        return chunks;
+    }
+
+    public V2D getGravity() {
+        return gravity;
+    }
+
+    public void setGravity(V2D gravity) {
+        this.gravity = gravity;
     }
 }
 

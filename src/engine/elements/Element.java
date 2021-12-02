@@ -3,8 +3,17 @@ package engine.elements;
 import engine.Colour;
 import engine.Steppable;
 import engine.containers.Cell;
-import engine.elements.rules.ChanceThreshold;
+import engine.elements.gases.Air;
+import engine.elements.liquids.Water;
+import engine.elements.solids.Coal;
+import engine.elements.solids.Salt;
+import engine.elements.solids.Sand;
+import engine.elements.solids.Wood;
+import engine.math.ChanceThreshold;
 import engine.math.V2D;
+import engine.math.XMath;
+
+import java.util.ArrayList;
 
 public abstract class Element implements Steppable {
 
@@ -56,16 +65,16 @@ public abstract class Element implements Steppable {
 
     @Override
     public void stepPre(double dt) {
-
+        velocity = velocity.add(cell.getTotalForce().multiply(dt));
     }
 
     @Override
     public void stepPhysics(double dt) {
-
+        V2D newLocation = cell.LOCATION.add(velocity.multiply(dt / Element.METRIC_WIDTH));
+        for(V2D step: XMath.bresenham(cell.LOCATION, newLocation)){
+            if(!checkAndSwap(step)) return;
+        }
     }
-
-    @Override
-    public void stepFSS(double dt) {}
 
     @Override
     public void stepPost(double dt) {
@@ -90,6 +99,10 @@ public abstract class Element implements Steppable {
         switch (type){
             case ElementData.ELEMENT_SAND: return new Sand();
             case ElementData.ELEMENT_AIR: return new Air();
+            case ElementData.ELEMENT_SALT: return new Salt();
+            case ElementData.ELEMENT_COAL: return new Coal();
+            case ElementData.ELEMENT_WATER: return new Water();
+            case ElementData.ELEMENT_WOOD: return new Wood();
             default: return null;
         }
     }

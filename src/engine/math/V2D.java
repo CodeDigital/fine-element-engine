@@ -125,17 +125,32 @@ public class V2D implements Mathable<V2D>{
     }
 
     public double getAngle(){
-        double angle = Math.atan(Y/X);
-        if(X < 0){
-            angle += Math.PI / 2;
+
+        // some special cases
+        if(X == 0){
+            if(Y < 0){
+                return Math.PI;
+            }else{
+                return 0;
+            }
         }
-        if(Y < 0){
-            angle *= -1;
+        if(Y == 0){
+            if(X >= 0){
+                return 0;
+            }else{
+                return Math.PI;
+            }
         }
+
+        double angle = -Math.atan(Y/X);
+        angle += (Y < 0 ? Math.PI:0);
+//        angle *= (X < 0 ? 1:-1);
+
         return angle;
     }
 
     public MAT22 getRotation(){
+        System.out.println(new MAT22(getAngle()));
         return new MAT22(getAngle());
     }
 

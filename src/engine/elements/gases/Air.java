@@ -1,8 +1,10 @@
-package engine.elements;
+package engine.elements.gases;
 
 import engine.Colour;
+import engine.elements.ElementData;
+import engine.elements.Gas;
 
-public class Air extends Gas{
+public class Air extends Gas {
 
     public Air() {
         super(ElementData.ELEMENT_AIR);
@@ -12,12 +14,10 @@ public class Air extends Gas{
     }
 
     @Override
-    public void stepPhysics(double dt) {
-        super.stepPhysics(dt);
+    public void stepPre(double dt) {
     }
 
     @Override
-    public void stepFSS(double dt) {
-        super.stepFSS(dt);
+    public void stepPhysics(double dt) {
     }
 }

@@ -14,40 +14,20 @@ public class Chunk implements Renderable, Steppable {
 
     public static final int WIDTH = 32;
     public static final int SIZE = WIDTH * WIDTH;
-    private V2D location;
+    public final V2D LOCATION;
     private Cell[][] cells;
     private PImage texture;
-    private Grid world;
+    public final Grid WORLD;
 
-    private final int TOTAL_FRAMES_UPDATED = 3;
+    private final int TOTAL_FRAMES_UPDATED = 4;
     private int residualFramesUpdated = TOTAL_FRAMES_UPDATED;
     private boolean updated = true;
-    private boolean active = true;
 
-    public Chunk(Grid world, V2D location) {
+    public Chunk(Grid WORLD, V2D LOCATION) {
         cells = new Cell[WIDTH][WIDTH];
-        this.location = location;
-        this.world = world;
+        this.LOCATION = LOCATION;
+        this.WORLD = WORLD;
         clear();
-    }
-
-    public void stepPre(double dt, V2D cellLocation){
-        V2D ij = getRelativeIJ(cellLocation);
-        cells[(int) ij.Y][(int) ij.X].stepPre(dt);
-    }
-
-    public void stepPhysics(double dt, V2D cellLocation){
-        V2D ij = getRelativeIJ(cellLocation);
-        cells[(int) ij.Y][(int) ij.X].stepPhysics(dt);
-    }
-    public void stepFSS(double dt, V2D cellLocation){
-        V2D ij = getRelativeIJ(cellLocation);
-        cells[(int) ij.Y][(int) ij.X].stepFSS(dt);
-    }
-
-    public void stepPost(double dt, V2D cellLocation){
-        V2D ij = getRelativeIJ(cellLocation);
-        cells[(int) ij.Y][(int) ij.X].stepPost(dt);
     }
 
     @Override
@@ -63,16 +43,12 @@ public class Chunk implements Renderable, Steppable {
 
     @Override
     public void stepPost(double dt) {
-        if(updated){
-            resetUpdated();
-        }else{
+        if(!updated){
             residualFramesUpdated--;
         }
 
         if(residualFramesUpdated < 0){
-            active = false;
-        }else{
-            active = true;
+            residualFramesUpdated = -1;
         }
     }
 
@@ -82,13 +58,13 @@ public class Chunk implements Renderable, Steppable {
     }
 
     public V2D getRelativeIJ(V2D cellLocation){
-        return cellLocation.subtract(location.multiply(WIDTH));
+        return cellLocation.subtract(LOCATION.multiply(WIDTH));
     }
 
     @Override
     public void render() {
         double showSize = WIDTH * Cell.getWidth();
-        V2D showLocation = location.multiply(showSize);
+        V2D showLocation = LOCATION.multiply(showSize);
 
         if(updated || texture == null){
             texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
@@ -106,19 +82,14 @@ public class Chunk implements Renderable, Steppable {
 
 
         Graphics.G().strokeWeight(1);
-        if(active){
+        if(isActive()){
             Graphics.G().stroke(Colour.BLACK.asInt());
         }else{
-            Graphics.G().stroke(Colour.WHITE.asInt());
+            Graphics.G().noStroke();
         }
         Graphics.G().noFill();
         Graphics.G().rectMode(PConstants.CORNER);
-        Graphics.G().rect((float) showLocation.X, (float) showLocation.Y, (float) showSize, (float) showSize);
-    }
-
-    public void setPixel(V2D pixel, int colour) {
-        V2D ij = getRelativeIJ(pixel);
-        texture.pixels[(int) (ij.Y * WIDTH + ij.X)] = colour;
+        Graphics.G().rect((float) showLocation.X, (float) showLocation.Y, (float) showSize - 1, (float) showSize - 1);
     }
 
     public Cell getCell(V2D at) {
@@ -126,7 +97,7 @@ public class Chunk implements Renderable, Steppable {
             V2D ij = getRelativeIJ(at);
             return cells[(int) ij.Y][(int) ij.X];
         }else{
-            return world.getCell(at);
+            return WORLD.getCell(at);
         }
     }
 
@@ -134,7 +105,7 @@ public class Chunk implements Renderable, Steppable {
         cells = new Cell[WIDTH][WIDTH];
         for(int j = 0; j < WIDTH; j++){
             for(int i = 0; i < WIDTH; i++){
-                V2D pixelLocation = location.multiply(WIDTH).addX(i).addY(j);
+                V2D pixelLocation = LOCATION.multiply(WIDTH).addX(i).addY(j);
                 cells[j][i] = new Cell(this, pixelLocation);
                 cells[j][i].setElement(Element.spawn(ElementData.ELEMENT_AIR));
             }
@@ -149,20 +120,12 @@ public class Chunk implements Renderable, Steppable {
                 ij.Y >= 0 && ij.Y < WIDTH);
     }
 
-    public V2D getLocation() {
-        return location;
-    }
-
     public Cell[][] getCells() {
         return cells;
     }
 
     public PImage getTexture() {
         return texture;
-    }
-
-    public Grid getWorld() {
-        return world;
     }
 
     public int getTOTAL_FRAMES_UPDATED() {
@@ -177,11 +140,11 @@ public class Chunk implements Renderable, Steppable {
         return updated;
     }
 
-    public boolean isActive() {
-        return active;
+    public void setUpdated(boolean updated) {
+        this.updated = updated;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public boolean isActive() {
+        return residualFramesUpdated > 0;
     }
 }

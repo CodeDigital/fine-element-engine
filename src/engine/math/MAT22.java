@@ -103,4 +103,9 @@ public class MAT22 implements Mathable<MAT22>{
         }
         return angle;
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%.2f, %.2f, %.2f, %.2f]", M00, M01, M10, M11);
+    }
 }

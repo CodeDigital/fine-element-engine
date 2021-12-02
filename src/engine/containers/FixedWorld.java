@@ -22,15 +22,23 @@ public class FixedWorld extends Grid{
     @Override
     public Cell getCell(V2D at) {
         if(inBounds(at)){
-            V2D ij = getChunkLocation(at);
+            V2D ij = toChunkCoordinate(at);
             return chunks[(int) ij.Y][(int) ij.X].getCell(at);
         }
         return null;
     }
 
     @Override
-    public V2D getChunkLocation(V2D cellLocation) {
-        return new V2D((int) (cellLocation.X / Chunk.WIDTH), (int) (cellLocation.Y / Chunk.WIDTH));
+    public Chunk getChunk(V2D at) {
+        if(inBounds(at)){
+            V2D ij = toChunkCoordinate(at);
+            return chunks[(int) ij.Y][(int) ij.X];
+        }
+        return null;
+    }
+
+    public V2D toChunkCoordinate(V2D cellLocation) {
+        return new V2D((cellLocation.X / Chunk.WIDTH), (cellLocation.Y / Chunk.WIDTH));
     }
 
     public void clear(){

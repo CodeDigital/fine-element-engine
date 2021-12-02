@@ -7,14 +7,27 @@ public class ElementData {
     // SOLID TYPES
     public static final String MATTER_SOLID = "solid";
 
-    // Sand
     public static final String ELEMENT_SAND = "sand";
     public static final double ELEMENT_SAND_DENSITY = 1442;
-    public static final double ELEMENT_SAND_INERTIAL_RESISTANCE = 0.1;
+    public static final double ELEMENT_SAND_FSS_SPREAD = 0.5;
+
+    public static final String ELEMENT_SALT = "salt";
+    public static final double ELEMENT_SALT_DENSITY = 1023.6;
+    public static final double ELEMENT_SALT_FSS_SPREAD = 0.25;
+
+    public static final String ELEMENT_COAL = "coal";
+    public static final double ELEMENT_COAL_DENSITY = 1683;
+    public static final double ELEMENT_COAL_FSS_SPREAD = 0.01;
+
+    public static final String ELEMENT_WOOD = "wood";
+    public static final double ELEMENT_WOOD_DENSITY = 800;
 
     // LIQUID TYPES
     public static final String MATTER_LIQUID = "liquid";
 
+    public static final String ELEMENT_WATER = "water";
+    public static final double ELEMENT_WATER_DENSITY = 998;
+    public static final double ELEMENT_WATER_FSS_SPREAD = 0.25;
 
     // GAS TYPES
     public static final String MATTER_GAS = "gas";
@@ -29,6 +42,10 @@ public class ElementData {
     // All types in an array
     public static final String[] ELEMENT_TYPES = {
             ELEMENT_AIR,
-            ELEMENT_SAND
+            ELEMENT_WOOD,
+            ELEMENT_WATER,
+            ELEMENT_SAND,
+            ELEMENT_SALT,
+            ELEMENT_COAL
     };
 }
