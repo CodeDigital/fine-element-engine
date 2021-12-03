@@ -1,13 +1,14 @@
 package engine.elements;
 
 import engine.containers.Chunk;
+import engine.math.XMath;
 
 public class ElementData {
 
     // Constraints
     public static final double SPEED_MAX = Chunk.WIDTH;
     public static final double STATIC_FRICTION = 0.95;
-
+    public static final double REST_PRESSURE = XMath.sciNum(1.013, 5);
 
     // Element Information and Types
 

@@ -40,6 +40,7 @@ public abstract class Element implements Steppable {
     // Other Science Info
     protected boolean isStatic = false;
     protected boolean isCharged = false;
+    protected double restPressure = ElementData.REST_PRESSURE;
     protected double temperature = 24; // in Celsius
     protected double gravityEffect = 1;
     protected double conductivityHeat = 0;
@@ -79,11 +80,14 @@ public abstract class Element implements Steppable {
     }
 
     public void applyCellForce(double dt){
-        velocity = velocity.add(cell.getTotalForce().multiply(dt));
+        applyForce(cell.getTotalForce(), dt);
+    }
+
+    public void applyForce(V2D force, double dt){
+        velocity = velocity.add(force.multiply(dt));
         double sqVelMag = velocity.magnitudeSquared();
         double sqSpeedMax = ElementData.SPEED_MAX * ElementData.SPEED_MAX;
         if(sqVelMag > sqSpeedMax){
-//            velocity = velocity.multiply(sqSpeedMax / sqVelMag);
             velocity = V2D.ZERO;
         }
     }
