@@ -23,7 +23,6 @@ public class Cell implements Steppable {
     // forces and gravity
     private MAT22 direction;
     private ArrayList<V2D> forces = new ArrayList<>();
-    private double pressure = ElementData.REST_PRESSURE;
 
     private boolean updated = false;
 
@@ -74,18 +73,6 @@ public class Cell implements Steppable {
     @Override
     public void stepPost(double dt) {
 
-        double totalPressure = pressure;
-        for(Cell c:CELL_BORDERS){
-            if(c == null) continue;
-            totalPressure += c.getPressure();
-        }
-        double avgPressure = pressure / 9;
-        final double prop = 99;
-        for(Cell c:CELL_BORDERS){
-            if(c == null) continue;
-            c.setPressure((avgPressure + prop * c.getPressure()) / (prop + 1));
-        }
-
         if(element == null) return;
         element.stepPost(dt);
     }
@@ -95,7 +82,6 @@ public class Cell implements Steppable {
         Element next = with.getElement();
         with.setElement(prev);
         setElement(next);
-        removePressure(with);
     }
 
     public void swap(V2D with){
@@ -104,11 +90,7 @@ public class Cell implements Steppable {
     }
 
     public boolean canSwap(Cell with){
-//        if(element != null){ // in theory this will never occur. Null elements cannot check to swap with cells.
-//            if(element.isStatic()) return false;
-//        }
         if(with == null) return false;
-        with.addPressure(this);
         if(with.isUpdated()) return false;
         if(with.element != null){
             if(with.element.isStatic()) return false;
@@ -117,29 +99,6 @@ public class Cell implements Steppable {
             if(with.element.getDensity() < element.getDensity()) return true;
         }
         return false;
-    }
-
-    public void addPressure(Cell from){
-
-        if(from == null) return;
-        if(from.getElement() == null) return;
-        if(from.getElement().isStatic()) return;
-        double dp = getTotalForce().magnitude();
-        dp *= from.getElement().getMass();
-        dp /= (100 * Element.METRIC_VOLUME / Element.METRIC_WIDTH);
-        pressure += dp;
-//        from.setPressure(from.getPressure() - dp);
-
-    }
-
-    public void removePressure(Cell from){
-        if(from == null) return;
-        if(from.getElement() == null) return;
-        if(from.getElement().isStatic()) return;
-        double dp = getTotalForce().magnitude();
-        dp *= from.getElement().getMass();
-        dp /= (100 * Element.METRIC_VOLUME / Element.METRIC_WIDTH);
-        pressure -= dp;
     }
 
     public boolean canSwap(V2D with){
@@ -196,13 +155,5 @@ public class Cell implements Steppable {
 
     public static void setWidth(double width) {
         Cell.width = width;
-    }
-
-    public double getPressure() {
-        return pressure;
-    }
-
-    public void setPressure(double pressure) {
-        this.pressure = pressure;
     }
 }

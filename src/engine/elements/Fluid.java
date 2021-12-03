@@ -37,23 +37,23 @@ public abstract class Fluid extends Element{
         fluidViscosityLap = 40 / (Math.PI * Math.pow(fluidH, 5));
     }
 
-    @Override
-    public void applyCellForce(double dt) {
-        V2D pressureForce = V2D.ZERO;
-        for(int i = 0 ; i < 8; i++){
-            Cell c = cell.CELL_BORDERS.get(i);
-            if(c == null) continue;
-            V2D rijNormal = V2D.OCTALS[i].normal();
-            pressureForce = pressureForce
-                    .add(
-                            rijNormal
-                                    .multiply(restPressure - c.getPressure())
-                                    .multiply(Element.METRIC_VOLUME)
-                                    .multiply(1 / Element.METRIC_WIDTH));
-        }
-        applyForce(pressureForce.multiply(iMass), dt);
-        super.applyCellForce(dt);
-    }
+//    @Override
+//    public void applyCellForce(double dt) {
+//        V2D pressureForce = V2D.ZERO;
+//        for(int i = 0 ; i < 8; i++){
+//            Cell c = cell.CELL_BORDERS.get(i);
+//            if(c == null) continue;
+//            V2D rijNormal = V2D.OCTALS[i].normal();
+//            pressureForce = pressureForce
+//                    .add(
+//                            rijNormal
+//                                    .multiply(restPressure - c.getPressure())
+//                                    .multiply(Element.METRIC_VOLUME)
+//                                    .multiply(1 / Element.METRIC_WIDTH));
+//        }
+//        applyForce(pressureForce.multiply(iMass), dt);
+//        super.applyCellForce(dt);
+//    }
 
     @Override
     public void stepPre(double dt) {
