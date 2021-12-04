@@ -1,100 +1,191 @@
 package engine.elements;
 
+import engine.Colour;
 import engine.containers.Cell;
+import engine.math.Chance;
 import engine.math.V2D;
 import engine.math.XMath;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public abstract class Fluid extends Element{
 
-    private double fluidMaxMass;
-    private double fluidMaxCompression = 0;
-    private double fluidMaxFlow = 0;
+    private Chance fluidFSSSpread = new Chance(1);
+    private double fluidFSSRange = 1;
+    private Chance fluidEqualise = new Chance(0);
+    private FluidBody fluidParent = new FluidBody();
 
     public Fluid(String MATTER, String TYPE) {
         super(MATTER, TYPE);
     }
 
+    public Fluid(String MATTER, String TYPE, double fluidFSSSpreadProbability) {
+        super(MATTER, TYPE);
+        fluidFSSSpread = new Chance(fluidFSSSpreadProbability);
+    }
+
+    public Fluid(String MATTER, String TYPE, Chance fluidFSSSpread) {
+        super(MATTER, TYPE);
+        this.fluidFSSSpread = fluidFSSSpread;
+    }
+
     @Override
     protected void setMassData(double density) {
         super.setMassData(density);
-        fluidMaxMass = mass;
-    }
-
-    protected void setFluidData(double maxCompression, double maxFlow){
-        fluidMaxMass  = (1 + maxCompression) * mass;
-        fluidMaxCompression = maxCompression;
-        fluidMaxFlow = maxFlow;
-    }
-
-    @Override
-    public double getPressureFlow(Cell relativeTo){
-        Element e = relativeTo.getElement();
-        if(e == null) return 0;
-        if(e.TYPE != ElementData.ELEMENT_AIR && e.TYPE != TYPE) return 0;
-
-        V2D rij = relativeTo.LOCATION.subtract(cell.LOCATION);
-        double flow = 0;
-        if(rij.dot(velocity) > 0){
-            if(mass < fluidMaxMass || e.getMass() < fluidMaxMass){
-                flow = fluidMaxMass - e.getMass();
-            }else{
-                flow = mass - e.getMass() + fluidMaxCompression;
-                flow *= 0.5;
-            }
-        }else if(rij.dot(velocity) < 0){
-            if(mass < fluidMaxMass || e.getMass() < fluidMaxMass){
-                flow = mass - fluidMaxMass;
-            }else{
-                flow = mass - e.getMass() - fluidMaxCompression;
-                flow *= 0.5;
-            }
-        }else{
-            flow = (mass + e.getMass()) / 2;
-        }
-
-        return XMath.clamp(flow, -fluidMaxFlow, fluidMaxFlow);
     }
 
     @Override
     public void stepPre(double dt) {
         applyCellForce(dt);
-        applyPressureForce(dt);
+        fluidParent.reset();
+        checkFluidParents();
     }
 
     @Override
     public void stepPhysics(double dt) {
-        performFlow(dt);
         movePhysics(dt);
+        fluidEqualisation();
     }
 
-    public void applyPressureForce(double dt){
-        V2D pressureForce = V2D.ZERO;
-        for(int i = 0 ; i < 8; i++){
-            Cell c = cell.CELL_BORDERS.get(i);
-            if(c == null) continue;
-            V2D rijNormal = V2D.OCTALS[i].normal();
-            pressureForce = pressureForce
-                    .add(
-                            rijNormal
-                                    .multiply(cell.getPressure() - c.getPressure())
-                                    .multiply(Element.METRIC_VOLUME)
-                                    .multiply(1 / Element.METRIC_WIDTH));
+    public void fluidEqualisation(){
+        checkFluidParents();
+
+        // chance at swapping with the lowest dot product fluid of same type
+        if(fluidEqualise.check()){
+
+            Fluid lowestFluid = fluidParent.getLowestFluid();
+            if(lowestFluid == null) return;
+
+            ArrayList<Cell> borders = cell.CELL_BORDERS;
+            Collections.shuffle(borders);
+            for(Cell c:borders){
+                if(cell.canSwap(c)){
+                    if(c.getElement().TYPE == TYPE) return;
+                    if(fluidParent.getLowestDotProduct() < FluidBody.dotProduct(c)){
+                        fluidParent.remove(lowestFluid);
+                        lowestFluid.getCell().swap(c);
+                        return;
+                    }
+                }
+            }
         }
-        applyForce(pressureForce.multiply(iMass), dt);
     }
 
-    public void performFlow(double dt){
-        for(int i = 0; i < 8; i++){
-            Cell c = cell.CELL_BORDERS.get(i);
+
+    @Override
+    public void stepFSS(double dt) {
+
+        assert cell != null;
+
+        double range = fluidFSSRange * Math.random();
+
+        V2D fssDown = V2D.CARDINALS[2];
+        V2D down = cell.applyDirection(fssDown).add(cell.LOCATION);
+        V2D fssRight = cell.applyDirection(V2D.CARDINALS[1]);
+        V2D right = fssRight.multiply(range).add(cell.LOCATION);
+        V2D downRight = fssRight.add(down);
+        V2D fssLeft = cell.applyDirection(V2D.CARDINALS[3]);
+        V2D left = fssLeft.multiply(range).add(cell.LOCATION);
+        V2D downLeft = fssLeft.add(down);
+
+        ArrayList<V2D> order = new ArrayList<>();
+        order.add(downRight);
+        order.add(downLeft);
+        if(fluidFSSSpread.check()){
+            order.add(right);
+            order.add(left);
+        }
+
+        Collections.shuffle(order);
+
+        if(XMath.randomBoolean()){
+            order.add(down);
+        }else{
+            order.add(0, down);
+        }
+
+        for(V2D to:order){
+            if(steppingCheckAndSwap(to)) return;
+        }
+    }
+
+    @Override
+    public void stepPost(double dt) {
+        super.stepPost(dt);
+        fluidParent.setWasReset(false);
+    }
+
+    public void checkFluidParents(){
+        fluidParent.remove(this);
+        FluidBody newParent = new FluidBody();
+        double lowestDP = FluidBody.dotProduct(this);
+
+        ArrayList<Cell> borders = cell.CELL_BORDERS;
+        Collections.shuffle(borders);
+        for(Cell c:borders){
             if(c == null) continue;
             Element e = c.getElement();
             if(e == null) continue;
-            if(e.TYPE == TYPE){
-                double flow = getPressureFlow(c);
-                mass -= flow * dt;
-                e.updateMass(e.getMass() + flow * dt);
+            if(e.TYPE != TYPE) continue;
+            if(!(e instanceof Fluid)) continue;
+            double dp = ((Fluid) e).getFluidParent().getLowestDotProduct();
+            if(dp <= lowestDP){
+                if(((Fluid) e).getFluidParent().getSize() >= newParent.getSize()){
+                    lowestDP = dp;
+                    newParent = ((Fluid) e).getFluidParent();
+                }
             }
         }
+
+        fluidParent = newParent;
+        fluidParent.add(this);
+    }
+
+    @Override
+    public Colour getColour() {
+        if(fluidParent.getLowestFluid() == this){
+            return new Colour(255, 0, 0);
+        }
+        return super.getColour();
+    }
+
+    @Override
+    public void setCell(Cell cell) {
+        super.setCell(cell);
+        checkFluidParents();
+    }
+
+    public Chance getFluidFSSSpread() {
+        return fluidFSSSpread;
+    }
+
+    public void setFluidFSSSpread(Chance fluidFSSSpread) {
+        this.fluidFSSSpread = fluidFSSSpread;
+    }
+
+    public double getFluidFSSRange() {
+        return fluidFSSRange;
+    }
+
+    public void setFluidFSSRange(double fluidFSSRange) {
+        this.fluidFSSRange = fluidFSSRange;
+    }
+
+    public Chance getFluidEqualise() {
+        return fluidEqualise;
+    }
+
+    public void setFluidEqualise(Chance fluidEqualise) {
+        this.fluidEqualise = fluidEqualise;
+    }
+
+    public FluidBody getFluidParent() {
+        return fluidParent;
+    }
+
+    public void setFluidParent(FluidBody fluidParent) {
+        this.fluidParent = fluidParent;
     }
 
 

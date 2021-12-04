@@ -15,6 +15,7 @@ public class Air extends Gas {
 
     @Override
     public void stepPre(double dt) {
+        checkFluidParents();
     }
 
     @Override

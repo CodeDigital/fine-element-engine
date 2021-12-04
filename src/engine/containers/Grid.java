@@ -9,7 +9,7 @@ import engine.math.XMath;
 public abstract class Grid implements Renderable, Steppable {
     public final int WIDTH, HEIGHT, SIZE, WIDTH_CELLS, HEIGHT_CELLS;
     protected Chunk[][] chunks;
-    protected V2D gravity = V2D.CARDINALS[2].multiply(9.8);
+    protected V2D gravity = V2D.OCTALS[1].multiply(9.8);
 
     public Grid(int WIDTH, int HEIGHT) {
         this.WIDTH = WIDTH;

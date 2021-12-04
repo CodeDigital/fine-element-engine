@@ -3,6 +3,7 @@ package engine.elements.liquids;
 import engine.Colour;
 import engine.elements.ElementData;
 import engine.elements.Liquid;
+import engine.math.Chance;
 import engine.math.XMath;
 
 public class Water extends Liquid {
@@ -10,7 +11,8 @@ public class Water extends Liquid {
     public Water(){
         super(ElementData.ELEMENT_WATER, ElementData.ELEMENT_WATER_FSS_SPREAD);
         setMassData(ElementData.ELEMENT_WATER_DENSITY);
-        setFluidData(0.1, 10);
+        setFluidFSSRange(10);
+        setFluidEqualise(new Chance(0.5));
 
         double noiseG = Math.random();
         double noiseB = Math.random();

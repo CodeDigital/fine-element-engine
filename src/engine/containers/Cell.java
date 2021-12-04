@@ -54,7 +54,6 @@ public class Cell implements Steppable {
     public void stepPre(double dt) {
         updated = false;
         if(element == null) return;
-        updatePressure(dt);
         element.stepPre(dt);
     }
 
@@ -101,6 +100,9 @@ public class Cell implements Steppable {
             if(with.getElement().MATTER == element.MATTER &&
                     element.MATTER == ElementData.MATTER_SOLID) return false;
             if(with.getElement().getDensity() < element.getDensity()) return true;
+            if(with.getElement().getDensity() == element.getDensity()){
+                return Math.random() < 0.001;
+            }
         }
         return false;
     }
@@ -137,21 +139,6 @@ public class Cell implements Steppable {
         CHUNK.resetUpdated();
     }
 
-    public void updatePressure(double dt){
-        for(int i = 0; i < 8; i++){
-            Cell c = CELL_BORDERS.get(i);
-            if(c == null) continue;
-            double dp = pressure - c.getPressure();
-            double flow = element.getPressureFlow(c) * dp;
-            flow = XMath.clamp(flow, pressure / 8, -c.getPressure() / 8);
-            addPressure(-dt * flow);
-            c.addPressure(dt * flow);
-        }
-    }
-
-    public void addPressure(double amount){
-        newPressure += amount;
-    }
 
     public MAT22 getDirection() {
         return direction;
@@ -175,13 +162,5 @@ public class Cell implements Steppable {
 
     public static void setWidth(double width) {
         Cell.width = width;
-    }
-
-    public double getPressure() {
-        return pressure;
-    }
-
-    public void setPressure(double pressure) {
-        this.pressure = pressure;
     }
 }

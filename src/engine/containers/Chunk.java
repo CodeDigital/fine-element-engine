@@ -90,12 +90,7 @@ public class Chunk implements Renderable, Steppable {
             texture.loadPixels();
             for(int j = 0; j < WIDTH; j++){
                 for(int i = 0; i < WIDTH; i++){
-//                    texture.pixels[j*WIDTH + i] = cells[j][i].getElement().getColour().asInt();
-                    texture.pixels[j*WIDTH + i] = cells[j][i]
-                            .getElement()
-                            .getColour()
-                            .darken(100 * cells[j][i].getPressure() / ElementData.REST_PRESSURE)
-                            .asInt();
+                    texture.pixels[j*WIDTH + i] = cells[j][i].getElement().getColour().asInt();
                 }
             }
             texture.updatePixels();
