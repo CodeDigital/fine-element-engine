@@ -9,7 +9,6 @@ public class Air extends Gas {
     public Air() {
         super(ElementData.ELEMENT_AIR);
         setMassData(ElementData.ELEMENT_AIR_DENSITY);
-        setFluidData(300, 16, 200);
 
         colour = new Colour(210, 216, 228);
     }

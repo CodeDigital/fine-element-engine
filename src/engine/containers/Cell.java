@@ -5,6 +5,7 @@ import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.math.MAT22;
 import engine.math.V2D;
+import engine.math.XMath;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,6 +24,8 @@ public class Cell implements Steppable {
     // forces and gravity
     private MAT22 direction;
     private ArrayList<V2D> forces = new ArrayList<>();
+    private double pressure = ElementData.REST_PRESSURE + XMath.random(-1000, 1000);
+    private double newPressure = pressure;
 
     private boolean updated = false;
 
@@ -51,6 +54,7 @@ public class Cell implements Steppable {
     public void stepPre(double dt) {
         updated = false;
         if(element == null) return;
+        updatePressure(dt);
         element.stepPre(dt);
     }
 
@@ -72,7 +76,7 @@ public class Cell implements Steppable {
 
     @Override
     public void stepPost(double dt) {
-
+        pressure = newPressure;
         if(element == null) return;
         element.stepPost(dt);
     }
@@ -92,11 +96,11 @@ public class Cell implements Steppable {
     public boolean canSwap(Cell with){
         if(with == null) return false;
         if(with.isUpdated()) return false;
-        if(with.element != null){
-            if(with.element.isStatic()) return false;
-            if(with.element.MATTER == element.MATTER &&
+        if(with.getElement() != null){
+            if(with.getElement().isStatic()) return false;
+            if(with.getElement().MATTER == element.MATTER &&
                     element.MATTER == ElementData.MATTER_SOLID) return false;
-            if(with.element.getDensity() < element.getDensity()) return true;
+            if(with.getElement().getDensity() < element.getDensity()) return true;
         }
         return false;
     }
@@ -133,6 +137,22 @@ public class Cell implements Steppable {
         CHUNK.resetUpdated();
     }
 
+    public void updatePressure(double dt){
+        for(int i = 0; i < 8; i++){
+            Cell c = CELL_BORDERS.get(i);
+            if(c == null) continue;
+            double dp = pressure - c.getPressure();
+            double flow = element.getPressureFlow(c) * dp;
+            flow = XMath.clamp(flow, pressure / 8, -c.getPressure() / 8);
+            addPressure(-dt * flow);
+            c.addPressure(dt * flow);
+        }
+    }
+
+    public void addPressure(double amount){
+        newPressure += amount;
+    }
+
     public MAT22 getDirection() {
         return direction;
     }
@@ -155,5 +175,13 @@ public class Cell implements Steppable {
 
     public static void setWidth(double width) {
         Cell.width = width;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(double pressure) {
+        this.pressure = pressure;
     }
 }

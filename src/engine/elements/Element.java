@@ -40,7 +40,7 @@ public abstract class Element implements Steppable {
     // Other Science Info
     protected boolean isStatic = false;
     protected boolean isCharged = false;
-    protected double restPressure = ElementData.REST_PRESSURE;
+    protected double pressureRest = ElementData.REST_PRESSURE;
     protected double temperature = 24; // in Celsius
     protected double gravityEffect = 1;
     protected double conductivityHeat = 0;
@@ -121,6 +121,11 @@ public abstract class Element implements Steppable {
     protected void setMassData(double density){
         this.density = density;
         mass = METRIC_VOLUME * density;
+        iMass = (mass == 0 ? 0:1/mass);
+    }
+
+    public void updateMass(double newMass){
+        mass = newMass;
         iMass = (mass == 0 ? 0:1/mass);
     }
 
@@ -234,5 +239,11 @@ public abstract class Element implements Steppable {
 
     public ChanceThreshold<Double> getChance_burn() {
         return chance_burn;
+    }
+
+
+
+    public double getPressureFlow(Cell relativeTo) {
+        return 0;
     }
 }

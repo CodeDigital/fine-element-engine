@@ -6,16 +6,9 @@ import engine.math.XMath;
 
 public abstract class Fluid extends Element{
 
-    private double fluidRestDensity = 0;
-    public static final double FLUID_GAS_CONSTANT = 8.314;
-    private double fluidH = XMath.SQRT_2;
-    private double fluidHSQ = fluidH * fluidH;
-    private double fluidViscosity = 0;
-    private double fluidPoly6 = 4 / (Math.PI * Math.pow(fluidH, 8));
-    private double fluidSpikyGrad = -10 / (Math.PI * Math.pow(fluidH, 5));
-    private double fluidViscosityLap = 40 / (Math.PI * Math.pow(fluidH, 5));
-    private double fluidDensity = 0;
-    private double fluidPressure = 0;
+    private double fluidMaxMass;
+    private double fluidMaxCompression = 0;
+    private double fluidMaxFlow = 0;
 
     public Fluid(String MATTER, String TYPE) {
         super(MATTER, TYPE);
@@ -23,150 +16,88 @@ public abstract class Fluid extends Element{
 
     @Override
     protected void setMassData(double density) {
-        fluidDensity = density;
         super.setMassData(density);
+        fluidMaxMass = mass;
     }
 
-    public void setFluidData(double restDensity, double h, double viscosity){
-        fluidRestDensity = restDensity;
-        fluidH = h;
-        fluidHSQ = h * h;
-        fluidViscosity = viscosity;
-        fluidPoly6 = 4 / (Math.PI * Math.pow(fluidH, 8));
-        fluidSpikyGrad = -10 / (Math.PI * Math.pow(fluidH, 5));
-        fluidViscosityLap = 40 / (Math.PI * Math.pow(fluidH, 5));
+    protected void setFluidData(double maxCompression, double maxFlow){
+        fluidMaxMass  = (1 + maxCompression) * mass;
+        fluidMaxCompression = maxCompression;
+        fluidMaxFlow = maxFlow;
     }
 
-//    @Override
-//    public void applyCellForce(double dt) {
-//        V2D pressureForce = V2D.ZERO;
-//        for(int i = 0 ; i < 8; i++){
-//            Cell c = cell.CELL_BORDERS.get(i);
-//            if(c == null) continue;
-//            V2D rijNormal = V2D.OCTALS[i].normal();
-//            pressureForce = pressureForce
-//                    .add(
-//                            rijNormal
-//                                    .multiply(restPressure - c.getPressure())
-//                                    .multiply(Element.METRIC_VOLUME)
-//                                    .multiply(1 / Element.METRIC_WIDTH));
-//        }
-//        applyForce(pressureForce.multiply(iMass), dt);
-//        super.applyCellForce(dt);
-//    }
+    @Override
+    public double getPressureFlow(Cell relativeTo){
+        Element e = relativeTo.getElement();
+        if(e == null) return 0;
+        if(e.TYPE != ElementData.ELEMENT_AIR && e.TYPE != TYPE) return 0;
+
+        V2D rij = relativeTo.LOCATION.subtract(cell.LOCATION);
+        double flow = 0;
+        if(rij.dot(velocity) > 0){
+            if(mass < fluidMaxMass || e.getMass() < fluidMaxMass){
+                flow = fluidMaxMass - e.getMass();
+            }else{
+                flow = mass - e.getMass() + fluidMaxCompression;
+                flow *= 0.5;
+            }
+        }else if(rij.dot(velocity) < 0){
+            if(mass < fluidMaxMass || e.getMass() < fluidMaxMass){
+                flow = mass - fluidMaxMass;
+            }else{
+                flow = mass - e.getMass() - fluidMaxCompression;
+                flow *= 0.5;
+            }
+        }else{
+            flow = (mass + e.getMass()) / 2;
+        }
+
+        return XMath.clamp(flow, -fluidMaxFlow, fluidMaxFlow);
+    }
 
     @Override
     public void stepPre(double dt) {
-//        computeDensityPressure();
         applyCellForce(dt);
+        applyPressureForce(dt);
     }
 
     @Override
     public void stepPhysics(double dt) {
-//        computeForces(dt);
+        performFlow(dt);
         movePhysics(dt);
     }
 
-    public void computeDensityPressure(){
-        fluidDensity = mass * fluidPoly6 * Math.pow(fluidHSQ, 3);
+    public void applyPressureForce(double dt){
+        V2D pressureForce = V2D.ZERO;
+        for(int i = 0 ; i < 8; i++){
+            Cell c = cell.CELL_BORDERS.get(i);
+            if(c == null) continue;
+            V2D rijNormal = V2D.OCTALS[i].normal();
+            pressureForce = pressureForce
+                    .add(
+                            rijNormal
+                                    .multiply(cell.getPressure() - c.getPressure())
+                                    .multiply(Element.METRIC_VOLUME)
+                                    .multiply(1 / Element.METRIC_WIDTH));
+        }
+        applyForce(pressureForce.multiply(iMass), dt);
+    }
 
+    public void performFlow(double dt){
         for(int i = 0; i < 8; i++){
             Cell c = cell.CELL_BORDERS.get(i);
             if(c == null) continue;
             Element e = c.getElement();
             if(e == null) continue;
-            if(!(e instanceof Fluid)) continue;
-
-            V2D rij = V2D.OCTALS[i];
-            double r2 = rij.magnitudeSquared();
-
-            fluidDensity += e.getMass() * fluidPoly6 * Math.pow(fluidHSQ - r2, 3);
-
+            if(e.TYPE == TYPE){
+                double flow = getPressureFlow(c);
+                mass -= flow * dt;
+                e.updateMass(e.getMass() + flow * dt);
+            }
         }
-
-        fluidPressure = FLUID_GAS_CONSTANT * (fluidDensity - fluidRestDensity);
-//        System.out.println("fp: " + fluidPressure);
-//        System.out.println("fd: " + fluidDensity);
     }
 
-    public void computeForces(double dt){
 
-        V2D forcePressure = V2D.ZERO;
-        V2D forceViscosity = V2D.ZERO;
-
-        for(int i = 0; i < 8; i++){
-            Cell c = cell.CELL_BORDERS.get(i);
-            if(c == null) continue;
-            Element e = c.getElement();
-            if(e == null) continue;
-            if(!(e instanceof Fluid)) continue;
-
-            V2D rij = V2D.OCTALS[i];
-            double r = rij.magnitude();
-//            System.out.println("rij: " + rij);
-//            System.out.println("old fp: " + forcePressure);
-
-            forcePressure = forcePressure.subtract(
-                    rij.normal()
-                            .multiply(e.getMass())
-                            .multiply(fluidPressure + ((Fluid) e).getFluidPressure())
-                            .multiply(0.5 / ((Fluid) e).getFluidDensity())
-                            .multiply(fluidSpikyGrad)
-                            .multiply(Math.pow(fluidH - r, 3))
-            );
-//            System.out.println("new fp: " + forcePressure);
-
-            forceViscosity = forceViscosity.add(
-                    e.getVelocity()
-                            .subtract(velocity)
-                            .multiply(fluidViscosity)
-                            .multiply(e.getMass())
-                            .multiply(1 / ((Fluid) e).getFluidDensity())
-                            .multiply(fluidViscosityLap)
-                            .multiply(fluidH - r)
-            );
-
-        }
-        velocity = velocity.add(forcePressure.multiply(dt / fluidDensity));
-        velocity = velocity.add(forceViscosity.multiply(dt / fluidDensity));
-        applyCellForce(dt);
-    }
-
-    public double getFluidRestDensity() {
-        return fluidRestDensity;
-    }
-
-    public double getFluidH() {
-        return fluidH;
-    }
-
-    public double getFluidHSQ() {
-        return fluidHSQ;
-    }
-
-    public double getFluidViscosity() {
-        return fluidViscosity;
-    }
-
-    public double getFluidPoly6() {
-        return fluidPoly6;
-    }
-
-    public double getFluidSpikyGrad() {
-        return fluidSpikyGrad;
-    }
-
-    public double getFluidViscosityLap() {
-        return fluidViscosityLap;
-    }
-
-    public double getFluidDensity() {
-        return fluidDensity;
-    }
-
-    public double getFluidPressure() {
-        return fluidPressure;
-    }
 }
 
 
