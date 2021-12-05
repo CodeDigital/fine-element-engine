@@ -26,13 +26,13 @@ public abstract class Powder extends Solid{
 
     @Override
     public void stepFSS(double dt) {
-
+        final boolean inFSS = true;
         assert cell != null;
 
         V2D fssDown = V2D.CARDINALS[2];
         V2D down = cell.applyDirection(fssDown).add(cell.LOCATION);
 
-        if(steppingCheckAndSwap(down)) return;
+        if(steppingCheckAndSwap(down, inFSS)) return;
 
         if(!fssFreefalling){
             if(cell.isUpdated()) fssFreefalling = true;
@@ -47,11 +47,11 @@ public abstract class Powder extends Solid{
         V2D downLeft = cell.applyDirection(fssLeft).add(down);
 
         if(XMath.randomBoolean()){
-            if(steppingCheckAndSwap(downLeft)) return;
-            if(steppingCheckAndSwap(downRight)) return;
+            if(steppingCheckAndSwap(downLeft, inFSS)) return;
+            if(steppingCheckAndSwap(downRight, inFSS)) return;
         }else{
-            if(steppingCheckAndSwap(downRight)) return;
-            if(steppingCheckAndSwap(downLeft)) return;
+            if(steppingCheckAndSwap(downRight, inFSS)) return;
+            if(steppingCheckAndSwap(downLeft, inFSS)) return;
         }
 
     }

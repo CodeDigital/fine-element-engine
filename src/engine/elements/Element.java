@@ -40,7 +40,6 @@ public abstract class Element implements Steppable {
     // Other Science Info
     protected boolean isStatic = false;
     protected boolean isCharged = false;
-    protected double pressureRest = ElementData.REST_PRESSURE;
     protected double temperature = 24; // in Celsius
     protected double gravityEffect = 1;
     protected double conductivityHeat = 0;
@@ -58,6 +57,8 @@ public abstract class Element implements Steppable {
 
     protected String type_burned;
     protected ChanceThreshold<Double> chance_burn;
+
+    private boolean updatedInFSS = false;
 
     public Element(String MATTER, String TYPE) {
         this.MATTER = MATTER;
@@ -93,15 +94,16 @@ public abstract class Element implements Steppable {
     }
 
     public boolean movePhysics(double dt){
+        final boolean inFSS = false;
         V2D newLocation = cell.LOCATION.add(velocity.multiply(dt / Element.METRIC_WIDTH));
-        return steppingCheckAndSwap(newLocation);
+        return steppingCheckAndSwap(newLocation, inFSS);
     }
 
-    public boolean steppingCheckAndSwap(V2D to){
+    public boolean steppingCheckAndSwap(V2D to, boolean inFSS){
         boolean hasMoved = false;
         for(V2D step:XMath.bresenham(cell.LOCATION, to)){
             if(step.equal(cell.LOCATION)) continue;
-            if(checkAndSwap(step)){
+            if(checkAndSwap(step, inFSS)){
                 hasMoved = true;
             }else{
                 break;
@@ -110,9 +112,10 @@ public abstract class Element implements Steppable {
         return hasMoved;
     }
 
-    public boolean checkAndSwap(V2D to){
+    public boolean checkAndSwap(V2D to, boolean inFSS){
         if(cell.canSwap(to)){
             cell.swap(to);
+            updatedInFSS = inFSS;
             return true;
         }
         return false;

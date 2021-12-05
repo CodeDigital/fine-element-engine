@@ -14,7 +14,6 @@ public abstract class Fluid extends Element{
     private Chance fluidFSSSpread = new Chance(1);
     private double fluidFSSRange = 1;
     private Chance fluidEqualise = new Chance(0);
-    private FluidBody fluidParent = new FluidBody();
 
     public Fluid(String MATTER, String TYPE) {
         super(MATTER, TYPE);
@@ -38,43 +37,16 @@ public abstract class Fluid extends Element{
     @Override
     public void stepPre(double dt) {
         applyCellForce(dt);
-        fluidParent.reset();
-        checkFluidParents();
     }
 
     @Override
     public void stepPhysics(double dt) {
         movePhysics(dt);
-        fluidEqualisation();
     }
-
-    public void fluidEqualisation(){
-        checkFluidParents();
-
-        // chance at swapping with the lowest dot product fluid of same type
-        if(fluidEqualise.check()){
-
-            Fluid lowestFluid = fluidParent.getLowestFluid();
-            if(lowestFluid == null) return;
-
-            ArrayList<Cell> borders = cell.CELL_BORDERS;
-            Collections.shuffle(borders);
-            for(Cell c:borders){
-                if(cell.canSwap(c)){
-                    if(c.getElement().TYPE == TYPE) return;
-                    if(fluidParent.getLowestDotProduct() < FluidBody.dotProduct(c)){
-                        fluidParent.remove(lowestFluid);
-                        lowestFluid.getCell().swap(c);
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
 
     @Override
     public void stepFSS(double dt) {
+        final boolean inFSS = true;
 
         assert cell != null;
 
@@ -106,54 +78,24 @@ public abstract class Fluid extends Element{
         }
 
         for(V2D to:order){
-            if(steppingCheckAndSwap(to)) return;
+            if(steppingCheckAndSwap(to, inFSS)) return;
         }
     }
 
     @Override
     public void stepPost(double dt) {
         super.stepPost(dt);
-        fluidParent.setWasReset(false);
     }
 
-    public void checkFluidParents(){
-        fluidParent.remove(this);
-        FluidBody newParent = new FluidBody();
-        double lowestDP = FluidBody.dotProduct(this);
-
-        ArrayList<Cell> borders = cell.CELL_BORDERS;
-        Collections.shuffle(borders);
-        for(Cell c:borders){
-            if(c == null) continue;
-            Element e = c.getElement();
-            if(e == null) continue;
-            if(e.TYPE != TYPE) continue;
-            if(!(e instanceof Fluid)) continue;
-            double dp = ((Fluid) e).getFluidParent().getLowestDotProduct();
-            if(dp <= lowestDP){
-                if(((Fluid) e).getFluidParent().getSize() >= newParent.getSize()){
-                    lowestDP = dp;
-                    newParent = ((Fluid) e).getFluidParent();
-                }
-            }
-        }
-
-        fluidParent = newParent;
-        fluidParent.add(this);
-    }
 
     @Override
     public Colour getColour() {
-        if(fluidParent.getLowestFluid() == this){
-            return new Colour(255, 0, 0);
-        }
         return super.getColour();
     }
 
     @Override
     public void setCell(Cell cell) {
         super.setCell(cell);
-        checkFluidParents();
     }
 
     public Chance getFluidFSSSpread() {
@@ -179,15 +121,6 @@ public abstract class Fluid extends Element{
     public void setFluidEqualise(Chance fluidEqualise) {
         this.fluidEqualise = fluidEqualise;
     }
-
-    public FluidBody getFluidParent() {
-        return fluidParent;
-    }
-
-    public void setFluidParent(FluidBody fluidParent) {
-        this.fluidParent = fluidParent;
-    }
-
 
 }
 
