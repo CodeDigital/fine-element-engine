@@ -4,16 +4,14 @@ import engine.Colour;
 import engine.Steppable;
 import engine.containers.Cell;
 import engine.elements.gases.Air;
+import engine.elements.gases.Steam;
+import engine.elements.liquids.Acid;
 import engine.elements.liquids.Water;
-import engine.elements.solids.Coal;
-import engine.elements.solids.Salt;
-import engine.elements.solids.Sand;
-import engine.elements.solids.Wood;
+import engine.elements.solids.*;
+import engine.math.Chance;
 import engine.math.ChanceThreshold;
 import engine.math.V2D;
 import engine.math.XMath;
-
-import java.util.ArrayList;
 
 public abstract class Element implements Steppable {
 
@@ -49,14 +47,17 @@ public abstract class Element implements Steppable {
     protected double frictionStatic = 0;
 
     // Other states
-    protected String type_melted;
-    protected ChanceThreshold<Double> chance_melt;
+    protected String typeLowTemperature = ElementData.AIR;
+    protected ChanceThreshold<Double> chanceLowTemperature = ChanceThreshold.ALWAYS_FALSE;
 
-    protected String type_evaporated;
-    protected ChanceThreshold<Double> chance_evaporate;
+    protected String typeHighTemperature = ElementData.AIR;
+    protected ChanceThreshold<Double> chanceHighTemperature = ChanceThreshold.ALWAYS_FALSE;
 
-    protected String type_burned;
-    protected ChanceThreshold<Double> chance_burn;
+    protected String typeBurned = ElementData.AIR;
+    protected ChanceThreshold<Double> chanceBurn = ChanceThreshold.ALWAYS_FALSE;
+
+    protected String typeDissolved = ElementData.AIR;
+    protected ChanceThreshold<Double> chanceDissolve = ChanceThreshold.ALWAYS_FALSE;
 
     private boolean updatedInFSS = false;
 
@@ -78,6 +79,35 @@ public abstract class Element implements Steppable {
     @Override
     public void stepPost(double dt) {
         if(!cell.isUpdated()) velocity = velocity.multiply(ElementData.STATIC_FRICTION);
+
+        propagateTemperature(dt);
+        checkConversions();
+
+    }
+
+    public void propagateTemperature(double dt){
+        for(Cell c:cell.CELL_BORDERS){
+            if(c == null) continue;
+            Element e = c.getElement();
+            if(e == null) continue;
+
+            double dTemp = e.getTemperature() - temperature;
+            dTemp *= dt / 8;
+            temperature += dTemp;
+            e.setTemperature(getTemperature() - dTemp);
+        }
+    }
+
+    public void checkConversions(){
+        if(chanceHighTemperature.check(temperature)){
+            Element newElement = Element.spawn(typeHighTemperature);
+            newElement.setTemperature(temperature);
+            cell.setElement(newElement);
+        }else if(chanceLowTemperature.check(temperature)){
+            Element newElement = Element.spawn(typeLowTemperature);
+            newElement.setTemperature(temperature);
+            cell.setElement(newElement);
+        }
     }
 
     public void applyCellForce(double dt){
@@ -134,12 +164,15 @@ public abstract class Element implements Steppable {
 
     public static Element spawn(String type){
         switch (type){
-            case ElementData.ELEMENT_SAND: return new Sand();
-            case ElementData.ELEMENT_AIR: return new Air();
-            case ElementData.ELEMENT_SALT: return new Salt();
-            case ElementData.ELEMENT_COAL: return new Coal();
-            case ElementData.ELEMENT_WATER: return new Water();
-            case ElementData.ELEMENT_WOOD: return new Wood();
+            case ElementData.SAND: return new Sand();
+            case ElementData.AIR: return new Air();
+            case ElementData.SALT: return new Salt();
+            case ElementData.COAL: return new Coal();
+            case ElementData.WATER: return new Water();
+            case ElementData.WOOD: return new Wood();
+            case ElementData.ACID: return new Acid();
+            case ElementData.STEAM: return new Steam();
+            case ElementData.ICE: return new Ice();
             default: return null;
         }
     }
@@ -196,6 +229,10 @@ public abstract class Element implements Steppable {
         return temperature;
     }
 
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+    }
+
     public double getGravityEffect() {
         return gravityEffect;
     }
@@ -220,31 +257,69 @@ public abstract class Element implements Steppable {
         return frictionStatic;
     }
 
-    public String getType_melted() {
-        return type_melted;
+    public String getTypeLowTemperature() {
+        return typeLowTemperature;
     }
 
-    public ChanceThreshold<Double> getChance_melt() {
-        return chance_melt;
+    public void setTypeLowTemperature(String typeLowTemperature) {
+        this.typeLowTemperature = typeLowTemperature;
     }
 
-    public String getType_evaporated() {
-        return type_evaporated;
+    public ChanceThreshold<Double> getChanceLowTemperature() {
+        return chanceLowTemperature;
     }
 
-    public ChanceThreshold<Double> getChance_evaporate() {
-        return chance_evaporate;
+    public void setChanceLowTemperature(ChanceThreshold<Double> chanceLowTemperature) {
+        this.chanceLowTemperature = chanceLowTemperature;
     }
 
-    public String getType_burned() {
-        return type_burned;
+    public String getTypeHighTemperature() {
+        return typeHighTemperature;
     }
 
-    public ChanceThreshold<Double> getChance_burn() {
-        return chance_burn;
+    public void setTypeHighTemperature(String typeHighTemperature) {
+        this.typeHighTemperature = typeHighTemperature;
     }
 
+    public ChanceThreshold<Double> getChanceHighTemperature() {
+        return chanceHighTemperature;
+    }
 
+    public void setChanceHighTemperature(ChanceThreshold<Double> chanceHighTemperature) {
+        this.chanceHighTemperature = chanceHighTemperature;
+    }
+
+    public String getTypeBurned() {
+        return typeBurned;
+    }
+
+    public void setTypeBurned(String typeBurned) {
+        this.typeBurned = typeBurned;
+    }
+
+    public ChanceThreshold<Double> getChanceBurn() {
+        return chanceBurn;
+    }
+
+    public void setChanceBurn(ChanceThreshold<Double> chanceBurn) {
+        this.chanceBurn = chanceBurn;
+    }
+
+    public String getTypeDissolved() {
+        return typeDissolved;
+    }
+
+    public void setTypeDissolved(String typeDissolved) {
+        this.typeDissolved = typeDissolved;
+    }
+
+    public ChanceThreshold<Double> getChanceDissolve() {
+        return chanceDissolve;
+    }
+
+    public void setChanceDissolve(ChanceThreshold<Double> chanceDissolve) {
+        this.chanceDissolve = chanceDissolve;
+    }
 
     public double getPressureFlow(Cell relativeTo) {
         return 0;

@@ -4,6 +4,8 @@ import java.util.function.Predicate;
 
 public class ChanceThreshold<T>{
 
+    public static final ChanceThreshold<Double> ALWAYS_FALSE = new ChanceThreshold<Double>(0, 0, i->false);
+    public static final ChanceThreshold<Double> ALWAYS_TRUE = new ChanceThreshold<>(1, 1, i->true);
     private final Chance CHANCE_YES, CHANCE_NO;
     private final Predicate<T> threshold;
 

@@ -4,13 +4,23 @@ import engine.Colour;
 import engine.containers.Cell;
 import engine.elements.ElementData;
 import engine.elements.StaticElement;
+import engine.math.ChanceThreshold;
 import engine.math.XMath;
 
 public class Wood extends StaticElement {
 
     public Wood(){
-        super(ElementData.MATTER_SOLID, ElementData.ELEMENT_WOOD);
-        setMassData(ElementData.ELEMENT_WOOD_DENSITY);
+        super(ElementData.MATTER_SOLID, ElementData.WOOD);
+        setMassData(ElementData.WOOD_DENSITY);
+
+        setChanceDissolve(
+                new ChanceThreshold<Double>(
+                        0.1,
+                        0.025,
+                        temp -> (temp > 100)
+                )
+        );
+        setTypeDissolved(ElementData.COAL);
 
         double noise = Math.random();
 

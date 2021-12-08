@@ -13,20 +13,9 @@ public abstract class Fluid extends Element{
 
     private Chance fluidFSSSpread = new Chance(1);
     private double fluidFSSRange = 1;
-    private Chance fluidEqualise = new Chance(0);
 
     public Fluid(String MATTER, String TYPE) {
         super(MATTER, TYPE);
-    }
-
-    public Fluid(String MATTER, String TYPE, double fluidFSSSpreadProbability) {
-        super(MATTER, TYPE);
-        fluidFSSSpread = new Chance(fluidFSSSpreadProbability);
-    }
-
-    public Fluid(String MATTER, String TYPE, Chance fluidFSSSpread) {
-        super(MATTER, TYPE);
-        this.fluidFSSSpread = fluidFSSSpread;
     }
 
     @Override
@@ -112,14 +101,6 @@ public abstract class Fluid extends Element{
 
     public void setFluidFSSRange(double fluidFSSRange) {
         this.fluidFSSRange = fluidFSSRange;
-    }
-
-    public Chance getFluidEqualise() {
-        return fluidEqualise;
-    }
-
-    public void setFluidEqualise(Chance fluidEqualise) {
-        this.fluidEqualise = fluidEqualise;
     }
 
 }

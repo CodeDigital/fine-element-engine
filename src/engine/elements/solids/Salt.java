@@ -3,13 +3,16 @@ package engine.elements.solids;
 import engine.Colour;
 import engine.elements.ElementData;
 import engine.elements.Powder;
+import engine.math.Chance;
 import engine.math.XMath;
 
 public class Salt extends Powder {
 
     public Salt() {
-        super(ElementData.ELEMENT_SALT, ElementData.ELEMENT_SALT_FSS_SPREAD);
-        setMassData(ElementData.ELEMENT_SALT_DENSITY);
+        super(ElementData.SALT);
+        setMassData(ElementData.SALT_DENSITY);
+
+        setFssSpread(new Chance(ElementData.SALT_FSS_SPREAD));
 
         double noiseGrey = Math.random();
         // println("sand set");

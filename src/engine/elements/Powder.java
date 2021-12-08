@@ -14,16 +14,6 @@ public abstract class Powder extends Solid{
         super(TYPE);
     }
 
-    public Powder(String TYPE, Chance fssSpread) {
-        super(TYPE);
-        this.fssSpread = fssSpread;
-    }
-
-    public Powder(String TYPE, double fssSpreadProb) {
-        super(TYPE);
-        this.fssSpread = new Chance(fssSpreadProb);
-    }
-
     @Override
     public void stepFSS(double dt) {
         final boolean inFSS = true;
@@ -54,5 +44,21 @@ public abstract class Powder extends Solid{
             if(steppingCheckAndSwap(downLeft, inFSS)) return;
         }
 
+    }
+
+    public Chance getFssSpread() {
+        return fssSpread;
+    }
+
+    public void setFssSpread(Chance fssSpread) {
+        this.fssSpread = fssSpread;
+    }
+
+    public boolean isFssFreefalling() {
+        return fssFreefalling;
+    }
+
+    public void setFssFreefalling(boolean fssFreefalling) {
+        this.fssFreefalling = fssFreefalling;
     }
 }

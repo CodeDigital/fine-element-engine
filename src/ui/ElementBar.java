@@ -17,7 +17,7 @@ public class ElementBar implements Renderable {
         int y = Graphics.G().HEIGHT - 2 * SpawnButton.HEIGHT - PADDING;
         int x = 0;
         V2D location = new V2D(x, y);
-        for(String type: ElementData.ELEMENT_TYPES){
+        for(String type: ElementData.TYPES){
             spawnButtons.add(new SpawnButton(location, type));
 
             location = location.addX(PADDING + SpawnButton.WIDTH);

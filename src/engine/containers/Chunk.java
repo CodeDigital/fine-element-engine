@@ -7,6 +7,7 @@ import engine.Steppable;
 import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.math.V2D;
+import engine.math.XMath;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -91,6 +92,9 @@ public class Chunk implements Renderable, Steppable {
             for(int j = 0; j < WIDTH; j++){
                 for(int i = 0; i < WIDTH; i++){
                     texture.pixels[j*WIDTH + i] = cells[j][i].getElement().getColour().asInt();
+//                    texture.pixels[j*WIDTH + i] = cells[j][i].getElement().getColour().setR(
+//                            XMath.map(cells[j][i].getElement().getTemperature(), 0, 110, 0, 255)
+//                    ).asInt();
                 }
             }
             texture.updatePixels();
@@ -126,7 +130,7 @@ public class Chunk implements Renderable, Steppable {
             for(int i = 0; i < WIDTH; i++){
                 V2D pixelLocation = LOCATION.multiply(WIDTH).addX(i).addY(j);
                 cells[j][i] = new Cell(this, pixelLocation);
-                cells[j][i].setElement(Element.spawn(ElementData.ELEMENT_AIR));
+                cells[j][i].setElement(Element.spawn(ElementData.AIR));
             }
         }
     }

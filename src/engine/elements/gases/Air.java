@@ -3,14 +3,23 @@ package engine.elements.gases;
 import engine.Colour;
 import engine.elements.ElementData;
 import engine.elements.Gas;
+import engine.math.Chance;
 
 public class Air extends Gas {
 
     public Air() {
-        super(ElementData.ELEMENT_AIR);
-        setMassData(ElementData.ELEMENT_AIR_DENSITY);
+        super(ElementData.AIR);
+        setFluidFSSSpread(
+                new Chance(ElementData.AIR_FSS_SPREAD)
+        );
+        setMassData(ElementData.AIR_DENSITY);
+        setFluidFSSRange(ElementData.AIR_FSS_RANGE);
 
-        colour = new Colour(210, 216, 228);
+        double r = 210 + 5 * Math.random();
+        double g = 216 + 5 * Math.random();
+        double b = 228 + 5 * Math.random();
+
+        colour = new Colour(r, g, b);
     }
 
     @Override
@@ -19,10 +28,6 @@ public class Air extends Gas {
 
     @Override
     public void stepPhysics(double dt) {
-    }
-
-    @Override
-    public void stepFSS(double dt) {
     }
 
     @Override

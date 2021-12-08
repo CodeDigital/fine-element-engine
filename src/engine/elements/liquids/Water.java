@@ -9,10 +9,11 @@ import engine.math.XMath;
 public class Water extends Liquid {
 
     public Water(){
-        super(ElementData.ELEMENT_WATER, ElementData.ELEMENT_WATER_FSS_SPREAD);
-        setMassData(ElementData.ELEMENT_WATER_DENSITY);
-        setFluidFSSRange(10);
-        setFluidEqualise(new Chance(0.5));
+        super(ElementData.WATER);
+        setMassData(ElementData.WATER_DENSITY);
+
+        setFluidFSSSpread(new Chance(ElementData.WATER_FSS_SPREAD));
+        setFluidFSSRange(ElementData.WATER_FSS_RANGE);
 
         double noiseG = Math.random();
         double noiseB = Math.random();

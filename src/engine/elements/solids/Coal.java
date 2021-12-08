@@ -3,13 +3,16 @@ package engine.elements.solids;
 import engine.Colour;
 import engine.elements.ElementData;
 import engine.elements.Powder;
+import engine.math.Chance;
 import engine.math.XMath;
 
 public class Coal extends Powder {
 
     public Coal() {
-        super(ElementData.ELEMENT_COAL, ElementData.ELEMENT_COAL_FSS_SPREAD);
-        setMassData(ElementData.ELEMENT_COAL_DENSITY);
+        super(ElementData.COAL);
+        setMassData(ElementData.COAL_DENSITY);
+
+        setFssSpread(new Chance(ElementData.COAL_FSS_SPREAD));
 
         double noiseGrey = Math.random();
         // println("sand set");

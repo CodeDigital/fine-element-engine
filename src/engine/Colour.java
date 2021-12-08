@@ -39,4 +39,20 @@ public class Colour {
     public Colour darken(double by) {
         return new Colour(R - by, G - by, B - by);
     }
+
+    public Colour setR(double r){
+        return new Colour(r, G, B, A);
+    }
+
+    public Colour setG(double g){
+        return new Colour(R, g, B, A);
+    }
+
+    public Colour setB(double b){
+        return new Colour(R, G, b, A);
+    }
+
+    public Colour setA(double a){
+        return new Colour(R, G, B, a);
+    }
 }

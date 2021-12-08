@@ -4,13 +4,16 @@ import engine.Colour;
 import engine.Debug;
 import engine.elements.ElementData;
 import engine.elements.Powder;
+import engine.math.Chance;
 import engine.math.XMath;
 
 public class Sand extends Powder {
 
     public Sand() {
-        super(ElementData.ELEMENT_SAND, ElementData.ELEMENT_SAND_FSS_SPREAD);
-        setMassData(ElementData.ELEMENT_SAND_DENSITY);
+        super(ElementData.SAND);
+        setMassData(ElementData.SAND_DENSITY);
+
+        setFssSpread(new Chance(ElementData.SAND_FSS_SPREAD));
 
         double noiseR = Math.random();
         double noiseG = Math.random();

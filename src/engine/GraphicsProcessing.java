@@ -50,6 +50,7 @@ public class GraphicsProcessing extends PApplet implements GraphicSystem{
     }
 
     public void draw(){
+        background(255);
         game.loop();
     }
 
