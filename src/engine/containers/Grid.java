@@ -471,6 +471,10 @@ public abstract class Grid implements Renderable, Steppable {
     public void setGravity(V2D gravity) {
         this.gravity = gravity;
     }
+
+    public V2D forceOn(V2D location) {
+        return gravity;
+    }
 }
 
 /**

@@ -111,7 +111,7 @@ public abstract class Element implements Steppable {
     }
 
     public void applyCellForce(double dt){
-        applyForce(cell.getTotalForce(), dt);
+        applyForce(cell.getForce(), dt);
     }
 
     public void applyForce(V2D force, double dt){
