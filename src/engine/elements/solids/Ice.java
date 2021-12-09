@@ -7,6 +7,7 @@ import engine.math.Chance;
 import engine.math.ChanceThreshold;
 import engine.math.XMath;
 
+// TODO: Commenting
 public class Ice extends Powder {
     public Ice() {
         super(ElementData.ICE);

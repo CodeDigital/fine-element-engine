@@ -1,5 +1,6 @@
 package engine.math;
 
+// TODO: Commenting
 public class V2D implements Mathable<V2D>{
 
     public static final V2D ZERO = new V2D(0, 0);

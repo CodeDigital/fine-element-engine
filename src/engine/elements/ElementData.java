@@ -1,8 +1,17 @@
 package engine.elements;
 
 import engine.containers.Chunk;
+import engine.elements.gases.Air;
+import engine.elements.gases.Steam;
+import engine.elements.liquids.Acid;
+import engine.elements.liquids.Water;
+import engine.elements.solids.*;
 import engine.math.XMath;
 
+// TODO: Commenting
+/**
+ * The main information class for element information.
+ */
 public class ElementData {
 
     // Constraints
@@ -42,6 +51,8 @@ public class ElementData {
     public static final double WATER_DENSITY = 998;
     public static final double WATER_FSS_SPREAD = 0.5;
     public static final double WATER_FSS_RANGE = 10;
+
+    // TODO: Rework high and low temp transformations.
     public static final double WATER_HIGH_TEMPERATURE = 100;
     public static final double WATER_HIGH_TEMPERATURE_CHANCE = 0.5;
     public static final double WATER_LOW_TEMPERATURE = 0;
@@ -84,4 +95,19 @@ public class ElementData {
             STEAM,
             ICE
     };
+
+    public static Element spawn(String type){
+        switch (type){
+            case SAND: return new Sand();
+            case AIR: return new Air();
+            case SALT: return new Salt();
+            case COAL: return new Coal();
+            case WATER: return new Water();
+            case WOOD: return new Wood();
+            case ACID: return new Acid();
+            case STEAM: return new Steam();
+            case ICE: return new Ice();
+            default: return null;
+        }
+    }
 }

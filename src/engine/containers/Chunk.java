@@ -1,9 +1,6 @@
 package engine.containers;
 
-import engine.Colour;
-import engine.Graphics;
-import engine.Renderable;
-import engine.Steppable;
+import engine.*;
 import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.math.V2D;
@@ -11,7 +8,8 @@ import processing.core.PConstants;
 import processing.core.PImage;
 
 /**
- * The type Chunk.
+ * Chunks within a world (can be active or inactive).
+ * Cells within inactive chunks do not perform fss and physics steps to preserve processing time.
  */
 public class Chunk implements Renderable, Steppable {
 
@@ -26,7 +24,7 @@ public class Chunk implements Renderable, Steppable {
     private PImage texture;
 
     // Updating trackers
-    private final int TOTAL_FRAMES_UPDATED = 10; // how long to check for updated after an update occurred.
+    public static final int TOTAL_FRAMES_UPDATED = 10; // how long to check for updated after an update occurred.
     private int residualFramesUpdated = TOTAL_FRAMES_UPDATED;
     private boolean updated = true;
 
@@ -57,11 +55,11 @@ public class Chunk implements Renderable, Steppable {
     @Override
     public void stepPre(double dt) {
         updated = false;
-        for(Cell[] row:cells){
-            for(Cell c:row){
-                c.stepPre(dt);
-            }
-        }
+//        for(Cell[] row:cells){
+//            for(Cell c:row){
+//                c.stepPre(dt);
+//            }
+//        }
     }
 
     @Override
@@ -73,12 +71,12 @@ public class Chunk implements Renderable, Steppable {
     @Override
     public void stepPost(double dt) {
 
-        // perform post-step iterations.
-        for(Cell[] row:cells){
-            for(Cell c:row){
-                c.stepPost(dt);
-            }
-        }
+//        // perform post-step iterations.
+//        for(Cell[] row:cells){
+//            for(Cell c:row){
+//                c.stepPost(dt);
+//            }
+//        }
 
         // iterate on residual frames left if not updated
         if(!updated){
@@ -100,7 +98,7 @@ public class Chunk implements Renderable, Steppable {
     }
 
     /**
-     * Get the cell location as ij 2d array coordinates.
+     * Get the cell location as a relative ij 2d array coordinates.
      *
      * @param cellLocation the cell location
      * @return coordinate vector
@@ -120,6 +118,8 @@ public class Chunk implements Renderable, Steppable {
         if(updated || texture == null){
             // if so, recreate the texture.
             texture = Graphics.G().createImage(WIDTH, WIDTH, PConstants.ARGB);
+
+            // get all the new colours / pixels.
             texture.loadPixels();
             for(int j = 0; j < WIDTH; j++){
                 for(int i = 0; i < WIDTH; i++){
@@ -129,10 +129,12 @@ public class Chunk implements Renderable, Steppable {
             texture.updatePixels();
         }
 
+        // display the saved texture
         Graphics.G().imageMode(PConstants.CORNER);
         Graphics.G().image(texture, (float) showLocation.X, (float) showLocation.Y, (float) showSize, (float) showSize);
 
-
+        // print whether the chunk is active (updating)
+        if(!Debug.isDEBUGGING()) return;
         Graphics.G().strokeWeight(1);
         if(isActive()){
             Graphics.G().stroke(Colour.BLACK.asInt());
@@ -145,22 +147,22 @@ public class Chunk implements Renderable, Steppable {
     }
 
     /**
-     * Gets cell.
+     * Gets the cell at specified coordinates.
      *
-     * @param at the at
-     * @return the cell
+     * @param at location of the cell (absolute location)
+     * @return the requested cell
      */
     public Cell getCell(V2D at) {
-        if(inBounds(at)){
+        if(inBounds(at)){ // check if the cell is in this chunk
             V2D ij = toCoordinate(at);
             return cells[(int) ij.Y][(int) ij.X];
-        }else{
+        }else{ // get the cell from elsewhere in the world
             return WORLD.getCell(at);
         }
     }
 
     /**
-     * Clear.
+     * Clear / reset the chunk (fill it with air elements).
      */
     public void clear(){
         cells = new Cell[WIDTH][WIDTH];
@@ -173,44 +175,27 @@ public class Chunk implements Renderable, Steppable {
         }
     }
 
+    /**
+     * Check whether a given vector is within the chunk bounds.
+     * @param at the location to check
+     * @return whether it's in bounds
+     */
     private boolean inBounds(V2D at) {
-
-        V2D ij = toCoordinate(at);
-
+        V2D ij = toCoordinate(at); // convert to relative index vector.
         return (ij.X >= 0 && ij.X < WIDTH &&
                 ij.Y >= 0 && ij.Y < WIDTH);
     }
 
     /**
-     * Get cells cell [ ] [ ].
-     *
-     * @return the cell [ ] [ ]
+     * Check whether the chunk is currently active.
+     * @return is active?
      */
-    public Cell[][] getCells() {
-        return cells;
-    }
-
-    /**
-     * Gets texture.
-     *
-     * @return the texture
-     */
-    public PImage getTexture() {
-        return texture;
-    }
-
-    /**
-     * Gets total frames updated.
-     *
-     * @return the total frames updated
-     */
-    public int getTOTAL_FRAMES_UPDATED() {
-        return TOTAL_FRAMES_UPDATED;
+    public boolean isActive() {
+        return residualFramesUpdated > 0;
     }
 
     /**
      * Gets residual frames updated.
-     *
      * @return the residual frames updated
      */
     public int getResidualFramesUpdated() {
@@ -219,7 +204,6 @@ public class Chunk implements Renderable, Steppable {
 
     /**
      * Is updated boolean.
-     *
      * @return the boolean
      */
     public boolean isUpdated() {
@@ -228,19 +212,9 @@ public class Chunk implements Renderable, Steppable {
 
     /**
      * Sets updated.
-     *
      * @param updated the updated
      */
     public void setUpdated(boolean updated) {
         this.updated = updated;
-    }
-
-    /**
-     * Is active boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isActive() {
-        return residualFramesUpdated > 0;
     }
 }

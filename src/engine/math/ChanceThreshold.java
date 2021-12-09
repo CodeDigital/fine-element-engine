@@ -2,6 +2,7 @@ package engine.math;
 
 import java.util.function.Predicate;
 
+// TODO: phase this out (I don't like this type of chance system).
 public class ChanceThreshold<T>{
 
     public static final ChanceThreshold<Double> ALWAYS_FALSE = new ChanceThreshold<Double>(0, 0, i->false);

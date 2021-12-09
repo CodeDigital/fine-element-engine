@@ -1,5 +1,6 @@
 package engine;
 
+// TODO: Commenting
 public class Graphics extends GraphicsProcessing{
 
     private static Graphics g;

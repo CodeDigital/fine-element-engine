@@ -2,6 +2,7 @@ package engine;
 
 import engine.math.XMath;
 
+// TODO: Commenting
 public class Colour {
     public static final Colour BLACK = new Colour(0);
     public static final Colour WHITE = new Colour(255);

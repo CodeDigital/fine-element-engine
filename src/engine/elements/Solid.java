@@ -2,6 +2,7 @@ package engine.elements;
 
 import engine.math.ChanceThreshold;
 
+// TODO: Commenting
 public abstract class Solid extends Element{
 
     public Solid(String TYPE) {

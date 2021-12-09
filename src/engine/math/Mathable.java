@@ -1,7 +1,7 @@
 package engine.math;
 
 /**
- * For mathematical classes.
+ * Necessary functions for mathematical classes.
  *
  * @param <T> The type of element with which the element is mathable
  */

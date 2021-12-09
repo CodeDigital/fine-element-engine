@@ -7,6 +7,7 @@ import engine.elements.StaticElement;
 import engine.math.ChanceThreshold;
 import engine.math.XMath;
 
+// TODO: Commenting
 public class Wood extends StaticElement {
 
     public Wood(){

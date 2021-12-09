@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
- * The type Cell.
+ * A container cell within the world.
+ * Each cell is fixed owned by a single chunk with an unchanging location.
  */
 public class Cell implements Steppable {
 

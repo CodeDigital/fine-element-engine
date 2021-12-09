@@ -4,6 +4,7 @@ import engine.math.Chance;
 import engine.math.V2D;
 import engine.math.XMath;
 
+// TODO: Commenting
 public abstract class Powder extends Solid{
 
     // Powder specific science info

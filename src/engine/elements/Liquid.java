@@ -1,8 +1,6 @@
 package engine.elements;
 
-import engine.math.ChanceThreshold;
-import engine.math.XMath;
-
+// TODO: Commenting
 public abstract class Liquid extends Fluid{
 
     public Liquid(String TYPE) {

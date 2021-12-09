@@ -13,6 +13,7 @@ import engine.math.ChanceThreshold;
 import engine.math.V2D;
 import engine.math.XMath;
 
+// TODO: Commenting
 public abstract class Element implements Steppable {
 
     public final String MATTER, TYPE;
@@ -98,6 +99,7 @@ public abstract class Element implements Steppable {
         }
     }
 
+    // TODO: Rework high and low temp transformations.
     public void checkConversions(){
         if(chanceHighTemperature.check(temperature)){
             Element newElement = Element.spawn(typeHighTemperature);
@@ -163,18 +165,7 @@ public abstract class Element implements Steppable {
     }
 
     public static Element spawn(String type){
-        switch (type){
-            case ElementData.SAND: return new Sand();
-            case ElementData.AIR: return new Air();
-            case ElementData.SALT: return new Salt();
-            case ElementData.COAL: return new Coal();
-            case ElementData.WATER: return new Water();
-            case ElementData.WOOD: return new Wood();
-            case ElementData.ACID: return new Acid();
-            case ElementData.STEAM: return new Steam();
-            case ElementData.ICE: return new Ice();
-            default: return null;
-        }
+        return ElementData.spawn(type);
     }
 
     public Cell getCell() {

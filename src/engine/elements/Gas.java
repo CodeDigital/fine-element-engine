@@ -1,9 +1,6 @@
 package engine.elements;
 
-import engine.containers.Cell;
-import engine.math.Chance;
-import engine.math.ChanceThreshold;
-
+// TODO: Commenting
 public abstract class Gas extends Fluid{
 
     public Gas(String TYPE) {

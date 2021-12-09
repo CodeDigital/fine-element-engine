@@ -7,6 +7,7 @@ import engine.math.V2D;
 
 import java.util.ArrayList;
 
+// TODO: Commenting
 public class ElementBar implements Renderable {
 
     public static final int PADDING = 10;

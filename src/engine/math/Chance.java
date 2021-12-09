@@ -1,5 +1,6 @@
 package engine.math;
 
+// TODO: Commenting
 public class Chance {
 
     private final double CHANCE;

@@ -3,6 +3,7 @@ package engine;
 import engine.containers.Grid;
 import engine.math.XMath;
 
+// TODO: Commenting
 public abstract class Game {
     public final Grid WORLD;
     private final double FPS = 30;

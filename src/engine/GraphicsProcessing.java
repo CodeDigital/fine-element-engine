@@ -1,9 +1,9 @@
 package engine;
 
 import processing.core.PApplet;
-import processing.event.MouseEvent;
 import processing.opengl.PGraphicsOpenGL;
 
+// TODO: Commenting
 public class GraphicsProcessing extends PApplet implements GraphicSystem{
 
     public final int WIDTH, HEIGHT;

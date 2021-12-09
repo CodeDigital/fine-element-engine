@@ -2,9 +2,7 @@ package engine.math;
 
 import java.util.ArrayList;
 
-/**
- * The type X math.
- */
+// TODO: Commenting
 public class XMath {
 
     public static final double EPSILON = 0.001;
@@ -13,6 +11,7 @@ public class XMath {
 
     public static final double G = sciNum(6.67408, -11);
     public static final double SQRT_2 = Math.sqrt(2);
+    public static final double GRAVITY = 20;
 
     public static double clamp(double val, double lo, double hi){
         return Math.max(lo, Math.min(val, hi));

@@ -1,5 +1,6 @@
 package engine.elements;
 
+// TODO: Commenting
 public class StaticElement extends Element{
 
     public StaticElement(String MATTER, String TYPE) {
