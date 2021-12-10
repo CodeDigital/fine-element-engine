@@ -6,8 +6,8 @@ import engine.math.XMath;
 // TODO: Commenting
 public abstract class Game {
     public final Grid WORLD;
-    private final double FPS = 30;
-    private final double DT = 1 / FPS;
+    public static final double FPS = 30;
+    public static final double DT = 1 / FPS;
     private double frameStart;
     private double accumulator = 0;
     private double timeDilation = 1;

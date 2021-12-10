@@ -15,7 +15,8 @@ public class Sandbox extends Game {
     private int brushSize = 10;
 
     public static void main(String[] args) {
-        FixedWorld world = new FixedWorld(8,4);
+//        FixedWorld world = new FixedWorld(8,4);
+        FixedWorld world = new FixedWorld(16, 9);
         Sandbox s = new Sandbox(world, 1280, 720, false, false);
         s.start();
         world.setCellWidth();

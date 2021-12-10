@@ -3,7 +3,10 @@ package engine.math;
 // TODO: Commenting
 public class Chance {
 
-    private final double CHANCE;
+    public static final Chance ALWAYS_FALSE = new Chance(0);
+    public static final Chance ALWAYS_TRUE = new Chance(1);
+
+    public final double CHANCE;
 
     public Chance(double CHANCE) {
         this.CHANCE = CHANCE;
@@ -16,5 +19,7 @@ public class Chance {
     public boolean check(){
         return Math.random() < CHANCE;
     }
+
+
 
 }

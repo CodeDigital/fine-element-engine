@@ -3,65 +3,76 @@ package engine.elements;
 import engine.Colour;
 import engine.Steppable;
 import engine.containers.Cell;
-import engine.elements.gases.Air;
-import engine.elements.gases.Steam;
-import engine.elements.liquids.Acid;
-import engine.elements.liquids.Water;
-import engine.elements.solids.*;
 import engine.math.Chance;
-import engine.math.ChanceThreshold;
 import engine.math.V2D;
 import engine.math.XMath;
 
-// TODO: Commenting
+/**
+ * The element class.
+ * Contains all types of scientific information.
+ */
 public abstract class Element implements Steppable {
 
     public final String MATTER, TYPE;
 
     // Cell and showing info
-    protected Cell cell;
-    protected Colour colour;
+    private Cell cell;
+    private Colour colour;
 
     // Translational Info
-    protected V2D acceleration = V2D.ZERO;
-    protected V2D velocity = V2D.ZERO;
+    private V2D acceleration = V2D.ZERO;
+    private V2D velocity = V2D.ZERO;
 
     // Scientific Info
     public static final double METRIC_WIDTH = 0.0625; // metres
     public static final double METRIC_VOLUME = METRIC_WIDTH * METRIC_WIDTH * 0.25; // metres^3
 
     // Mass Info
-    protected double density;
-    protected double mass;
-    protected double iMass;
-    protected double restitution = 0.5;
+    private double density;
+    private double mass;
+    private double iMass;
+    private double restitution = 0.5;
 
     // Other Science Info
-    protected boolean isStatic = false;
-    protected boolean isCharged = false;
-    protected double temperature = 24; // in Celsius
-    protected double gravityEffect = 1;
-    protected double conductivityHeat = 0;
-    protected double conductivityElectrical = 0;
-    protected double electricalCharge = 0;
-    protected double frictionDynamic = 0;
-    protected double frictionStatic = 0;
+    private boolean isStatic = false;
+    private boolean isCharged = false;
+    private double temperature = 24; // in Celsius
+    private double gravityEffect = 1;
+    private double conductivityHeat = 0.01;
+    private double conductivityElectrical = 0;
+    private double electricalCharge = 0;
+    private double frictionDynamic = 0;
+    private double frictionStatic = 0;
 
-    // Other states
-    protected String typeLowTemperature = ElementData.AIR;
-    protected ChanceThreshold<Double> chanceLowTemperature = ChanceThreshold.ALWAYS_FALSE;
+    // low temperature (freezing, condensation).
+    private String lowTemperatureType = ElementData.AIR;
+    private Chance lowTemperatureChance = Chance.ALWAYS_FALSE;
+    private double lowTemperature = Double.MIN_VALUE;
 
-    protected String typeHighTemperature = ElementData.AIR;
-    protected ChanceThreshold<Double> chanceHighTemperature = ChanceThreshold.ALWAYS_FALSE;
+    // high temperature (melting, evaporation).
+    private String highTemperatureType = ElementData.AIR;
+    private Chance highTemperatureChance = Chance.ALWAYS_FALSE;
+    private double highTemperature = Double.MAX_VALUE;
 
-    protected String typeBurned = ElementData.AIR;
-    protected ChanceThreshold<Double> chanceBurn = ChanceThreshold.ALWAYS_FALSE;
+    // burning (by fire or spark or other super hot element).
+    private String burnType = ElementData.AIR;
+    private Chance burnChance = Chance.ALWAYS_FALSE;
+    private double burnTemperature = Double.MAX_VALUE;
 
-    protected String typeDissolved = ElementData.AIR;
-    protected ChanceThreshold<Double> chanceDissolve = ChanceThreshold.ALWAYS_FALSE;
+    // dissolving (by acid).
+    private String dissolveType = ElementData.AIR;
+    private Chance dissolveChance = Chance.ALWAYS_FALSE;
+    private double dissolveTemperature = Double.MAX_VALUE;
 
+    // track if the update occurred in FSS or not (this may be used later to lock out physics features)
     private boolean updatedInFSS = false;
 
+    /**
+     * Instantiates a new Element.
+     *
+     * @param MATTER the matter
+     * @param TYPE   the type
+     */
     public Element(String MATTER, String TYPE) {
         this.MATTER = MATTER;
         this.TYPE = TYPE;
@@ -81,34 +92,54 @@ public abstract class Element implements Steppable {
     public void stepPost(double dt) {
         if(!cell.isUpdated()) velocity = velocity.multiply(ElementData.STATIC_FRICTION);
 
+        // propagate the temperature
         propagateTemperature(dt);
         checkConversions();
-
     }
 
+    /**
+     * Propagate temperature through the cell's bordering this one.
+     *
+     * @param dt time delta
+     */
     public void propagateTemperature(double dt){
         for(Cell c:cell.CELL_BORDERS){
+
+            // ensure the cell and element exists.
             if(c == null) continue;
             Element e = c.getElement();
             if(e == null) continue;
 
+            // get the temperature change.
             double dTemp = e.getTemperature() - temperature;
-            dTemp *= dt / 8;
+            dTemp *= dt;
+            dTemp *= (conductivityHeat + e.getConductivityHeat()) / 2;
+            dTemp /= 8;
             temperature += dTemp;
             e.setTemperature(getTemperature() - dTemp);
         }
     }
 
-    // TODO: Rework high and low temp transformations.
+    /**
+     * Convert elements depending on new temperatures.
+     */
     public void checkConversions(){
-        if(chanceHighTemperature.check(temperature)){
-            Element newElement = Element.spawn(typeHighTemperature);
-            newElement.setTemperature(temperature);
-            cell.setElement(newElement);
-        }else if(chanceLowTemperature.check(temperature)){
-            Element newElement = Element.spawn(typeLowTemperature);
-            newElement.setTemperature(temperature);
-            cell.setElement(newElement);
+        Element element = null;
+
+        if(temperature <= lowTemperature){ // freezing or condensation
+            if(lowTemperatureChance.check()){
+                element = Element.spawn(lowTemperatureType);
+            }
+        }else if(temperature >= highTemperature){ // melting or evaporating
+            if(highTemperatureChance.check()){
+                element = Element.spawn(highTemperatureType);
+            }
+        }
+
+        // convert if necessary
+        if(element != null){
+            element.setTemperature(temperature);
+            cell.setElement(element);
         }
     }
 
@@ -180,8 +211,16 @@ public abstract class Element implements Steppable {
         return colour;
     }
 
+    public void setColour(Colour colour) {
+        this.colour = colour;
+    }
+
     public V2D getAcceleration() {
         return acceleration;
+    }
+
+    public void setAcceleration(V2D acceleration) {
+        this.acceleration = acceleration;
     }
 
     public V2D getVelocity() {
@@ -196,24 +235,48 @@ public abstract class Element implements Steppable {
         return density;
     }
 
+    public void setDensity(double density) {
+        this.density = density;
+    }
+
     public double getMass() {
         return mass;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
     }
 
     public double getiMass() {
         return iMass;
     }
 
+    public void setiMass(double iMass) {
+        this.iMass = iMass;
+    }
+
     public double getRestitution() {
         return restitution;
+    }
+
+    public void setRestitution(double restitution) {
+        this.restitution = restitution;
     }
 
     public boolean isStatic() {
         return isStatic;
     }
 
+    public void setStatic(boolean aStatic) {
+        isStatic = aStatic;
+    }
+
     public boolean isCharged() {
         return isCharged;
+    }
+
+    public void setCharged(boolean charged) {
+        isCharged = charged;
     }
 
     public double getTemperature() {
@@ -228,91 +291,151 @@ public abstract class Element implements Steppable {
         return gravityEffect;
     }
 
+    public void setGravityEffect(double gravityEffect) {
+        this.gravityEffect = gravityEffect;
+    }
+
     public double getConductivityHeat() {
         return conductivityHeat;
+    }
+
+    public void setConductivityHeat(double conductivityHeat) {
+        this.conductivityHeat = conductivityHeat;
     }
 
     public double getConductivityElectrical() {
         return conductivityElectrical;
     }
 
+    public void setConductivityElectrical(double conductivityElectrical) {
+        this.conductivityElectrical = conductivityElectrical;
+    }
+
     public double getElectricalCharge() {
         return electricalCharge;
+    }
+
+    public void setElectricalCharge(double electricalCharge) {
+        this.electricalCharge = electricalCharge;
     }
 
     public double getFrictionDynamic() {
         return frictionDynamic;
     }
 
+    public void setFrictionDynamic(double frictionDynamic) {
+        this.frictionDynamic = frictionDynamic;
+    }
+
     public double getFrictionStatic() {
         return frictionStatic;
     }
 
-    public String getTypeLowTemperature() {
-        return typeLowTemperature;
+    public void setFrictionStatic(double frictionStatic) {
+        this.frictionStatic = frictionStatic;
     }
 
-    public void setTypeLowTemperature(String typeLowTemperature) {
-        this.typeLowTemperature = typeLowTemperature;
+    public String getLowTemperatureType() {
+        return lowTemperatureType;
     }
 
-    public ChanceThreshold<Double> getChanceLowTemperature() {
-        return chanceLowTemperature;
+    public void setLowTemperatureType(String lowTemperatureType) {
+        this.lowTemperatureType = lowTemperatureType;
     }
 
-    public void setChanceLowTemperature(ChanceThreshold<Double> chanceLowTemperature) {
-        this.chanceLowTemperature = chanceLowTemperature;
+    public Chance getLowTemperatureChance() {
+        return lowTemperatureChance;
     }
 
-    public String getTypeHighTemperature() {
-        return typeHighTemperature;
+    public void setLowTemperatureChance(Chance lowTemperatureChance) {
+        this.lowTemperatureChance = lowTemperatureChance;
     }
 
-    public void setTypeHighTemperature(String typeHighTemperature) {
-        this.typeHighTemperature = typeHighTemperature;
+    public double getLowTemperature() {
+        return lowTemperature;
     }
 
-    public ChanceThreshold<Double> getChanceHighTemperature() {
-        return chanceHighTemperature;
+    public void setLowTemperature(double lowTemperature) {
+        this.lowTemperature = lowTemperature;
     }
 
-    public void setChanceHighTemperature(ChanceThreshold<Double> chanceHighTemperature) {
-        this.chanceHighTemperature = chanceHighTemperature;
+    public String getHighTemperatureType() {
+        return highTemperatureType;
     }
 
-    public String getTypeBurned() {
-        return typeBurned;
+    public void setHighTemperatureType(String highTemperatureType) {
+        this.highTemperatureType = highTemperatureType;
     }
 
-    public void setTypeBurned(String typeBurned) {
-        this.typeBurned = typeBurned;
+    public Chance getHighTemperatureChance() {
+        return highTemperatureChance;
     }
 
-    public ChanceThreshold<Double> getChanceBurn() {
-        return chanceBurn;
+    public void setHighTemperatureChance(Chance highTemperatureChance) {
+        this.highTemperatureChance = highTemperatureChance;
     }
 
-    public void setChanceBurn(ChanceThreshold<Double> chanceBurn) {
-        this.chanceBurn = chanceBurn;
+    public double getHighTemperature() {
+        return highTemperature;
     }
 
-    public String getTypeDissolved() {
-        return typeDissolved;
+    public void setHighTemperature(double highTemperature) {
+        this.highTemperature = highTemperature;
     }
 
-    public void setTypeDissolved(String typeDissolved) {
-        this.typeDissolved = typeDissolved;
+    public String getBurnType() {
+        return burnType;
     }
 
-    public ChanceThreshold<Double> getChanceDissolve() {
-        return chanceDissolve;
+    public void setBurnType(String burnType) {
+        this.burnType = burnType;
     }
 
-    public void setChanceDissolve(ChanceThreshold<Double> chanceDissolve) {
-        this.chanceDissolve = chanceDissolve;
+    public Chance getBurnChance() {
+        return burnChance;
     }
 
-    public double getPressureFlow(Cell relativeTo) {
-        return 0;
+    public void setBurnChance(Chance burnChance) {
+        this.burnChance = burnChance;
+    }
+
+    public double getBurnTemperature() {
+        return burnTemperature;
+    }
+
+    public void setBurnTemperature(double burnTemperature) {
+        this.burnTemperature = burnTemperature;
+    }
+
+    public String getDissolveType() {
+        return dissolveType;
+    }
+
+    public void setDissolveType(String dissolveType) {
+        this.dissolveType = dissolveType;
+    }
+
+    public Chance getDissolveChance() {
+        return dissolveChance;
+    }
+
+    public void setDissolveChance(Chance dissolveChance) {
+        this.dissolveChance = dissolveChance;
+    }
+
+    public double getDissolveTemperature() {
+        return dissolveTemperature;
+    }
+
+    public void setDissolveTemperature(double dissolveTemperature) {
+        this.dissolveTemperature = dissolveTemperature;
+    }
+
+    public boolean isUpdatedInFSS() {
+        return updatedInFSS;
+    }
+
+    public void setUpdatedInFSS(boolean updatedInFSS) {
+        this.updatedInFSS = updatedInFSS;
     }
 }

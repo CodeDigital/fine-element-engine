@@ -1,5 +1,6 @@
 package engine.elements;
 
+import engine.containers.Cell;
 import engine.math.Chance;
 import engine.math.V2D;
 import engine.math.XMath;
@@ -18,6 +19,8 @@ public abstract class Powder extends Solid{
     @Override
     public void stepFSS(double dt) {
         final boolean inFSS = true;
+
+        Cell cell = getCell();
         assert cell != null;
 
         V2D fssDown = V2D.CARDINALS[2];

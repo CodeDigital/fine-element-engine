@@ -9,6 +9,7 @@ import engine.elements.solids.*;
 import engine.math.XMath;
 
 // TODO: Commenting
+// TODO: Have a pass at redoing physics statistics (heat, temp changes, chances).
 /**
  * The main information class for element information.
  */

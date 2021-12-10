@@ -24,7 +24,7 @@ public class Chunk implements Renderable, Steppable {
     private PImage texture;
 
     // Updating trackers
-    public static final int TOTAL_FRAMES_UPDATED = 10; // how long to check for updated after an update occurred.
+    public static final int TOTAL_FRAMES_UPDATED = (int) Game.FPS; // how long to check for updated after an update occurred.
     private int residualFramesUpdated = TOTAL_FRAMES_UPDATED;
     private boolean updated = true;
 

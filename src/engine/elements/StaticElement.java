@@ -5,7 +5,7 @@ public class StaticElement extends Element{
 
     public StaticElement(String MATTER, String TYPE) {
         super(MATTER, TYPE);
-        isStatic = true;
+        setStatic(true);
     }
 
     @Override

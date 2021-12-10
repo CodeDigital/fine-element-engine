@@ -6,21 +6,27 @@ import engine.elements.Powder;
 import engine.math.Chance;
 import engine.math.XMath;
 
-// TODO: Commenting
+/**
+ * The Ice element.
+ */
 public class Salt extends Powder {
 
+    /**
+     * Instantiates Salt.
+     */
     public Salt() {
         super(ElementData.SALT);
+
+        // set the element's mass data
         setMassData(ElementData.SALT_DENSITY);
 
+        // set the powder's spread chance
         setFssSpread(new Chance(ElementData.SALT_FSS_SPREAD));
 
+        // set the colour of the element
         double noiseGrey = Math.random();
-        // println("sand set");
-
         double grey = XMath.map(noiseGrey, 0, 1, 230, 255);
-
-        colour = new Colour(grey);
+        setColour(new Colour(grey));
     }
 
 }

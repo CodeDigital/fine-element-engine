@@ -37,7 +37,7 @@ public abstract class Fluid extends Element{
     @Override
     public void stepFSS(double dt) {
         final boolean inFSS = true;
-
+        Cell cell = getCell();
         assert cell != null;
 
         double range = fluidFSSRange * Math.random();

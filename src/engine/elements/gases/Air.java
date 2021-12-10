@@ -5,33 +5,38 @@ import engine.elements.ElementData;
 import engine.elements.Gas;
 import engine.math.Chance;
 
-// TODO: Commenting
+/**
+ * The Air element
+ * Has reduced physics functionality to save processing power.
+ */
 public class Air extends Gas {
 
+    /**
+     * Instantiates Air.
+     */
     public Air() {
         super(ElementData.AIR);
-        setFluidFSSSpread(
-                new Chance(ElementData.AIR_FSS_SPREAD)
-        );
+
+        // set the element's mass data
         setMassData(ElementData.AIR_DENSITY);
+
+        // set the fluid's spread chance and range
+        setFluidFSSSpread(new Chance(ElementData.AIR_FSS_SPREAD));
         setFluidFSSRange(ElementData.AIR_FSS_RANGE);
 
+        // set the colour of the element
         double r = 210 + 5 * Math.random();
         double g = 216 + 5 * Math.random();
         double b = 228 + 5 * Math.random();
-
-        colour = new Colour(r, g, b);
+        setColour(new Colour(r, g, b));
     }
 
-    @Override
-    public void stepPre(double dt) {
-    }
+//    @Override
+//    public void stepPre(double dt) {/* DOES NOTHING */}
 
     @Override
-    public void stepPhysics(double dt) {
-    }
+    public void stepPhysics(double dt) {/* DOES NOTHING */}
 
-    @Override
-    public void stepPost(double dt) {
-    }
+//    @Override
+//    public void stepPost(double dt) {/* DOES NOTHING */}
 }
