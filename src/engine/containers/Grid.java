@@ -83,9 +83,12 @@ public abstract class Grid implements Renderable, Steppable {
         // output order
         ArrayList<Cell> output = new ArrayList<>();
 
+        // the size of the checkers in the updating checkerboard
+        final int UPDATE_SIZE = 2 * Chunk.WIDTH;
+
         // find the offsets
-        int ox = (int) XMath.random(0, Chunk.WIDTH);
-        int oy = (int) XMath.random(0, Chunk.WIDTH);
+        int ox = (int) XMath.random(0, UPDATE_SIZE);
+        int oy = (int) XMath.random(0, UPDATE_SIZE);
 
         // determine whether we go row by row (true) or col by col (false).
         boolean startOnX = XMath.randomBoolean();
@@ -110,12 +113,12 @@ public abstract class Grid implements Renderable, Steppable {
                     output.add(c);
 
                     cy += dy;
-                    if((cy - dy * oy) % Chunk.WIDTH == 0) cy += dy * Chunk.WIDTH;
+                    if((cy - dy * oy) % UPDATE_SIZE == 0) cy += dy * UPDATE_SIZE;
                 }
 
                 alternate = !alternate;
                 cx += dx;
-                if((cx - dx * ox) % Chunk.WIDTH == 0) alternate = !alternate;
+                if((cx - dx * ox) % UPDATE_SIZE == 0) alternate = !alternate;
             }
 
             cx = getIndexStart(dx, ox, HEIGHT_CELLS, false);
@@ -133,12 +136,12 @@ public abstract class Grid implements Renderable, Steppable {
                     output.add(c);
 
                     cy += dy;
-                    if((cy - dy * oy) % Chunk.WIDTH == 0) cy += dy * Chunk.WIDTH;
+                    if((cy - dy * oy) % UPDATE_SIZE == 0) cy += dy * UPDATE_SIZE;
                 }
 
                 alternate = !alternate;
                 cx += dx;
-                if((cx - dx * ox) % Chunk.WIDTH == 0) alternate = !alternate;
+                if((cx - dx * ox) % UPDATE_SIZE == 0) alternate = !alternate;
             }
 
         }else{
@@ -157,12 +160,12 @@ public abstract class Grid implements Renderable, Steppable {
                     output.add(c);
 
                     cx += dx;
-                    if((cx - dx * ox) % Chunk.WIDTH == 0) cx += dx * Chunk.WIDTH;
+                    if((cx - dx * ox) % UPDATE_SIZE == 0) cx += dx * UPDATE_SIZE;
                 }
 
                 alternate = !alternate;
                 cy += dy;
-                if((cy - dy * oy) % Chunk.WIDTH == 0) alternate = !alternate;
+                if((cy - dy * oy) % UPDATE_SIZE == 0) alternate = !alternate;
             }
 
             cy = getIndexStart(dy, oy, HEIGHT_CELLS, false);
@@ -180,12 +183,12 @@ public abstract class Grid implements Renderable, Steppable {
                     output.add(c);
 
                     cx += dx;
-                    if((cx - dx * ox) % Chunk.WIDTH == 0) cx += dx * Chunk.WIDTH;
+                    if((cx - dx * ox) % UPDATE_SIZE == 0) cx += dx * UPDATE_SIZE;
                 }
 
                 alternate = !alternate;
                 cy += dy;
-                if((cy - dy * oy) % Chunk.WIDTH == 0) alternate = !alternate;
+                if((cy - dy * oy) % UPDATE_SIZE == 0) alternate = !alternate;
             }
 
         }
