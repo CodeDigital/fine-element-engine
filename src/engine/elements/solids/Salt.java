@@ -23,6 +23,9 @@ public class Salt extends Powder {
         // set the powder's spread chance
         setFssSpread(new Chance(ElementData.SALT_FSS_SPREAD));
 
+        // set the elements heat conductivity
+        setConductivityHeat(ElementData.SALT_CONDUCTIVITY_HEAT);
+
         // set the colour of the element
         double noiseGrey = Math.random();
         double grey = XMath.map(noiseGrey, 0, 1, 230, 255);

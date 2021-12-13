@@ -42,8 +42,8 @@ public class Acid extends Liquid {
 
     @Override
     public void stepPost(double dt) {
-        super.stepPost(dt);
         dissolveSurrounding(dt); // perform acid's functionality
+        super.stepPost(dt);
     }
 
     /**

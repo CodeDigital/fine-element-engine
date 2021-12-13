@@ -25,16 +25,6 @@ public abstract class Fluid extends Element{
     }
 
     @Override
-    public void stepPre(double dt) {
-        applyCellForce(dt);
-    }
-
-    @Override
-    public void stepPhysics(double dt) {
-        movePhysics(dt);
-    }
-
-    @Override
     public void stepFSS(double dt) {
         final boolean inFSS = true;
         Cell cell = getCell();

@@ -12,6 +12,13 @@ public class XMath {
     public static final double G = sciNum(6.67408, -11);
     public static final double SQRT_2 = Math.sqrt(2);
     public static final double GRAVITY = 20;
+    public static final double ZERO_CELSIUS = 273.15;
+    public static final double TEMPERATURE_MIN = 0;
+    public static final double TEMPERATURE_MAX = 12000;
+
+    public static double toKelvin(double celsius){
+        return ZERO_CELSIUS + celsius;
+    }
 
     public static double clamp(double val, double lo, double hi){
         return Math.max(lo, Math.min(val, hi));

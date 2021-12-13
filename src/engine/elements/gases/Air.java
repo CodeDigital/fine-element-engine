@@ -24,6 +24,9 @@ public class Air extends Gas {
         setFluidFSSSpread(new Chance(ElementData.AIR_FSS_SPREAD));
         setFluidFSSRange(ElementData.AIR_FSS_RANGE);
 
+        // set the elements heat conductivity
+        setConductivityHeat(ElementData.AIR_CONDUCTIVITY_HEAT);
+
         // set the colour of the element
         double r = 210 + 5 * Math.random();
         double g = 216 + 5 * Math.random();
@@ -31,12 +34,7 @@ public class Air extends Gas {
         setColour(new Colour(r, g, b));
     }
 
-//    @Override
-//    public void stepPre(double dt) {/* DOES NOTHING */}
-
     @Override
-    public void stepPhysics(double dt) {/* DOES NOTHING */}
+    public void stepPhysics(double dt) {propagateTemperature(dt);}
 
-//    @Override
-//    public void stepPost(double dt) {/* DOES NOTHING */}
 }

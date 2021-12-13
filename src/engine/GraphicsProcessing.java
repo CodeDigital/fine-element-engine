@@ -1,6 +1,7 @@
 package engine;
 
 import processing.core.PApplet;
+import processing.event.MouseEvent;
 import processing.opengl.PGraphicsOpenGL;
 
 // TODO: Commenting
@@ -59,5 +60,10 @@ public class GraphicsProcessing extends PApplet implements GraphicSystem{
     }
     public void mouseClicked(){
         game.mouseClicked();
+    }
+
+    @Override
+    public void mouseWheel(MouseEvent event) {
+        game.mouseWheel(-event.getCount());
     }
 }

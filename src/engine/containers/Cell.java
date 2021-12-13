@@ -76,7 +76,6 @@ public class Cell implements Steppable {
     @Override
     public void stepPre(double dt) {
         updated = false; // set the cell as not updated
-        if(!CHUNK.isActive()) return; // perform pre-step only if chunk is active.
         if(element == null) return; // no element means no stepping.
         element.stepPre(dt); // perform step on non-null element.
     }
@@ -100,7 +99,6 @@ public class Cell implements Steppable {
     @Override
     public void stepPost(double dt) {
         pressure = newPressure; // update pressure if necessary.
-        if(!CHUNK.isActive()) return; // perform post-step only if chunk is active.
         if(element == null) return; // no element means no stepping.
         element.stepPost(dt); // perform step on non-null element.
     }

@@ -9,18 +9,12 @@ public class StaticElement extends Element{
     }
 
     @Override
-    public void stepPre(double dt) {
-    }
-
-    @Override
     public void stepPhysics(double dt) {
+        propagateTemperature(dt);
     }
 
     @Override
     public void stepFSS(double dt) {
     }
 
-    @Override
-    public void stepPost(double dt) {
-    }
 }

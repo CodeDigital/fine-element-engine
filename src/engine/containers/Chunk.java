@@ -4,6 +4,7 @@ import engine.*;
 import engine.elements.Element;
 import engine.elements.ElementData;
 import engine.math.V2D;
+import engine.math.XMath;
 import processing.core.PConstants;
 import processing.core.PImage;
 
@@ -71,13 +72,6 @@ public class Chunk implements Renderable, Steppable {
     @Override
     public void stepPost(double dt) {
 
-//        // perform post-step iterations.
-//        for(Cell[] row:cells){
-//            for(Cell c:row){
-//                c.stepPost(dt);
-//            }
-//        }
-
         // iterate on residual frames left if not updated
         if(!updated){
             residualFramesUpdated--;
@@ -123,7 +117,15 @@ public class Chunk implements Renderable, Steppable {
             texture.loadPixels();
             for(int j = 0; j < WIDTH; j++){
                 for(int i = 0; i < WIDTH; i++){
-                    texture.pixels[j*WIDTH + i] = cells[j][i].getElement().getColour().asInt();
+                    Cell c = cells[j][i];
+                    texture.pixels[j*WIDTH + i] = c.getElement().getColour().asInt();
+//                    texture.pixels[j*WIDTH + i] = c
+//                            .getElement()
+//                            .getColour()
+//                            .setR(
+//                                    XMath.map(c.getElement().getTemperature(), XMath.TEMPERATURE_MIN, XMath.toKelvin(120), 0, 255)
+//                            )
+//                            .asInt();
                 }
             }
             texture.updatePixels();

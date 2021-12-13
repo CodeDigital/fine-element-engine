@@ -23,7 +23,15 @@ public class Ice extends Powder {
         setFssSpread(new Chance(ElementData.ICE_FSS_SPREAD));
 
         // the ice must have a temperature below 0 to exist.
-        setTemperature(-10);
+        setTemperature(XMath.toKelvin(-10));
+
+        // set the elements heat conductivity
+        setConductivityHeat(ElementData.ICE_CONDUCTIVITY_HEAT);
+
+        // set the element's high temperature conversion
+        setHighTemperature(ElementData.ICE_TEMPERATURE_HIGH);
+        setHighTemperatureChance(ElementData.DEFAULT_TEMPERATURE_CHANCE);
+        setHighTemperatureType(ElementData.ICE_TEMPERATURE_HIGH_TYPE);
 
         // set the colour of the element
         double noiseG = Math.random();

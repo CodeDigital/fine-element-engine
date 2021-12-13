@@ -25,7 +25,15 @@ public class Steam extends Gas {
         setFluidFSSRange(ElementData.STEAM_FSS_RANGE);
 
         // the steam must have a temperature above 100 to exist.
-        setTemperature(110);
+        setTemperature(XMath.toKelvin(110));
+
+        // set the elements heat conductivity
+        setConductivityHeat(ElementData.STEAM_CONDUCTIVITY_HEAT);
+
+        // set the element's low temperature conversion
+        setLowTemperature(ElementData.STEAM_TEMPERATURE_LOW);
+        setLowTemperatureChance(ElementData.DEFAULT_TEMPERATURE_CHANCE);
+        setLowTemperatureType(ElementData.STEAM_TEMPERATURE_LOW_TYPE);
 
         // set the colour of the element
         double noiseG = Math.random();

@@ -24,6 +24,9 @@ public class Sand extends Powder {
         // set the powder's spread chance
         setFssSpread(new Chance(ElementData.SAND_FSS_SPREAD));
 
+        // set the elements heat conductivity
+        setConductivityHeat(ElementData.SAND_CONDUCTIVITY_HEAT);
+
         // set the colour of the element
         double noiseR = Math.random();
         double noiseG = Math.random();

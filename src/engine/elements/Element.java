@@ -36,9 +36,10 @@ public abstract class Element implements Steppable {
     // Other Science Info
     private boolean isStatic = false;
     private boolean isCharged = false;
-    private double temperature = 24; // in Celsius
+    private double temperature = XMath.toKelvin(24); // in Celsius
+    private double newTemperature = temperature;
     private double gravityEffect = 1;
-    private double conductivityHeat = 0.01;
+    private double conductivityHeat = ElementData.DEFAULT_CONDUCTIVITY_HEAT;
     private double conductivityElectrical = 0;
     private double electricalCharge = 0;
     private double frictionDynamic = 0;
@@ -86,14 +87,16 @@ public abstract class Element implements Steppable {
     @Override
     public void stepPhysics(double dt) {
         movePhysics(dt);
+
+        // propagate the temperature
+        propagateTemperature(dt);
     }
 
     @Override
     public void stepPost(double dt) {
         if(!cell.isUpdated()) velocity = velocity.multiply(ElementData.STATIC_FRICTION);
 
-        // propagate the temperature
-        propagateTemperature(dt);
+        temperature = newTemperature;
         checkConversions();
     }
 
@@ -113,10 +116,10 @@ public abstract class Element implements Steppable {
             // get the temperature change.
             double dTemp = e.getTemperature() - temperature;
             dTemp *= dt;
-            dTemp *= (conductivityHeat + e.getConductivityHeat()) / 2;
             dTemp /= 8;
-            temperature += dTemp;
-            e.setTemperature(getTemperature() - dTemp);
+            double totalConductivity = conductivityHeat + e.getConductivityHeat();
+            newTemperature += dTemp * (conductivityHeat / totalConductivity);
+            e.setNewTemperature(e.getNewTemperature() - dTemp * (e.getConductivityHeat() / totalConductivity));
         }
     }
 
@@ -143,6 +146,11 @@ public abstract class Element implements Steppable {
         }
     }
 
+    /**
+     * Apply forces acting on the container cell.
+     *
+     * @param dt the time delta
+     */
     public void applyCellForce(double dt){
         applyForce(cell.getForce(), dt);
     }
@@ -156,6 +164,12 @@ public abstract class Element implements Steppable {
         }
     }
 
+    /**
+     * Move based on where the velocity sends you.
+     *
+     * @param dt the time delta
+     * @return whether it was successful
+     */
     public boolean movePhysics(double dt){
         final boolean inFSS = false;
         V2D newLocation = cell.LOCATION.add(velocity.multiply(dt / Element.METRIC_WIDTH));
@@ -284,7 +298,17 @@ public abstract class Element implements Steppable {
     }
 
     public void setTemperature(double temperature) {
+        double newTemp = XMath.clamp(temperature, XMath.TEMPERATURE_MIN, XMath.TEMPERATURE_MAX);
         this.temperature = temperature;
+        this.newTemperature = temperature;
+    }
+
+    public double getNewTemperature() {
+        return newTemperature;
+    }
+
+    public void setNewTemperature(double newTemperature) {
+        this.newTemperature = newTemperature;
     }
 
     public double getGravityEffect() {

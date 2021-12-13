@@ -49,6 +49,7 @@ public abstract class Game {
     public abstract void drawLoop();
     public void mousePressed(){}
     public void mouseClicked(){}
+    public void mouseWheel(double by) {}
 
     public double getCurrentTime(){
         return (double) System.currentTimeMillis() / 1000;
@@ -73,4 +74,5 @@ public abstract class Game {
     public void setTimeDilation(double timeDilation) {
         this.timeDilation = timeDilation;
     }
+
 }

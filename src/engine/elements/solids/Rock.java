@@ -10,29 +10,27 @@ import engine.math.XMath;
  * The Coal element
  * Has a high burn chance.
  */
-public class Coal extends Powder {
+public class Rock extends Powder {
 
     /**
      * Instantiates Coal.
      */
-    public Coal() {
-        super(ElementData.COAL);
+    public Rock() {
+        super(ElementData.ROCK);
 
         // set the element's mass data
-        setMassData(ElementData.COAL_DENSITY);
+        setMassData(ElementData.ROCK_DENSITY);
 
         // set the powder's spread chance
-        setFssSpread(new Chance(ElementData.COAL_FSS_SPREAD));
+        setFssSpread(new Chance(ElementData.ROCK_FSS_SPREAD));
 
         // set the elements heat conductivity
-        setConductivityHeat(ElementData.COAL_CONDUCTIVITY_HEAT);
+        setConductivityHeat(ElementData.ROCK_CONDUCTIVITY_HEAT);
 
         // set the colour of the element
-        double noiseRed = Math.random();
         double noiseGrey = Math.random();
-        double r = XMath.map(noiseRed, 0, 1, 0, 75);
-        double grey = XMath.map(noiseGrey, 0, 1, 0, 50);
-        setColour(new Colour(r, grey, grey));
+        double grey = XMath.map(noiseGrey, 0, 1, 0, 100);
+        setColour(new Colour(grey, grey, grey));
     }
 
 }
