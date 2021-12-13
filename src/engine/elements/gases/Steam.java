@@ -42,7 +42,7 @@ public class Steam extends Gas {
         double g = XMath.map(noiseG, 0, 1, 210, 225);
         double b = XMath.map(noiseB, 0, 1, 250, 255);
         double a = XMath.map(noiseA, 0, 1, 100, 200);
-        setColour(new Colour(210, g, b));
+        setColour(new Colour(150, g, b));
 
     }
 }

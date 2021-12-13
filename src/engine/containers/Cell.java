@@ -154,6 +154,11 @@ public class Cell implements Steppable {
                 e.TYPE != ElementData.AIR){
                 return Math.random() < XMath.EPSILON;
             }
+
+            // solid elements can sometimes sink a little
+            if(element.MATTER == ElementData.MATTER_SOLID
+                    && (e.MATTER == ElementData.MATTER_LIQUID
+                    || e.MATTER == ElementData.MATTER_GAS)) return Math.random() < XMath.EPSILON;
         }
 
         return false; // can't be swapped otherwise
