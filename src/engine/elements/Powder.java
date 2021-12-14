@@ -5,6 +5,9 @@ import engine.math.Chance;
 import engine.math.V2D;
 import engine.math.XMath;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 // TODO: Commenting
 public abstract class Powder extends Solid{
 
@@ -40,12 +43,14 @@ public abstract class Powder extends Solid{
         V2D fssLeft = V2D.CARDINALS[3];
         V2D downLeft = cell.applyDirection(fssLeft).add(down);
 
-        if(XMath.randomBoolean()){
-            if(steppingCheckAndSwap(downLeft, inFSS)) return;
-            if(steppingCheckAndSwap(downRight, inFSS)) return;
-        }else{
-            if(steppingCheckAndSwap(downRight, inFSS)) return;
-            if(steppingCheckAndSwap(downLeft, inFSS)) return;
+        ArrayList<V2D> order = new ArrayList<>();
+        order.add(downRight);
+        order.add(downLeft);
+
+        Collections.shuffle(order);
+
+        for(V2D to:order){
+            if(steppingCheckAndSwap(to, inFSS)) return;
         }
 
     }

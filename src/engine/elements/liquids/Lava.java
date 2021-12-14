@@ -38,8 +38,8 @@ public class Lava extends Liquid {
         // set the colour of the element
         double noiseR = Math.random();
         double noiseG = Math.random();
-        double r = XMath.map(noiseR, 0, 1, 150, 255);
-        double g = XMath.map(noiseG, 0, 1, 0, 140);
+        double r = XMath.map(noiseR, 0, 1, 225, 255);
+        double g = XMath.map(noiseG, 0, 1, 0, 170);
 
         setColour(new Colour(r, g, 0));
     }

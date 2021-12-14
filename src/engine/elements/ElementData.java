@@ -6,6 +6,7 @@ import engine.elements.gases.Steam;
 import engine.elements.liquids.Acid;
 import engine.elements.liquids.Lava;
 import engine.elements.liquids.Water;
+import engine.elements.reactions.Fire;
 import engine.elements.solids.*;
 import engine.math.Chance;
 import engine.math.XMath;
@@ -21,7 +22,7 @@ public class ElementData {
     public static final double SPEED_MAX = Chunk.WIDTH;
     public static final double STATIC_FRICTION = 0.95;
     public static final double REST_PRESSURE = XMath.sciNum(1.013, 5);
-    public static final Chance DEFAULT_TEMPERATURE_CHANCE = new Chance(0.01);
+    public static final Chance DEFAULT_TEMPERATURE_CHANCE = new Chance(0.001);
     public static final double DEFAULT_CONDUCTIVITY_HEAT = 1;
 
     // Element Information and Types
@@ -46,7 +47,7 @@ public class ElementData {
 
     public static final String ROCK = "rock";
     public static final double ROCK_DENSITY = 1683;
-    public static final double ROCK_FSS_SPREAD = 0.001;
+    public static final double ROCK_FSS_SPREAD = 0.005;
     public static final double ROCK_CONDUCTIVITY_HEAT = 1.8;
 
     public static final String ICE = "ice";
@@ -112,6 +113,9 @@ public class ElementData {
     public static final double STEAM_TEMPERATURE_LOW = XMath.toKelvin(100);
     public static final String STEAM_TEMPERATURE_LOW_TYPE = WATER;
 
+    // Reaction
+    public static final String FIRE = "fire";
+
     // REACTION TYPES
     public static final String MATTER_REACTION = "reaction";
 
@@ -128,7 +132,8 @@ public class ElementData {
             ICE,
             BOILER,
             ROCK,
-            LAVA
+            LAVA,
+            FIRE
     };
 
     public static Element spawn(String type){
@@ -145,6 +150,7 @@ public class ElementData {
             case BOILER: return new Boiler();
             case ROCK: return new Rock();
             case LAVA: return new Lava();
+            case FIRE: return new Fire();
             default: return null;
         }
     }
