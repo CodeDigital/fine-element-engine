@@ -58,7 +58,7 @@ public abstract class Element implements Steppable {
     // burning (by fire or spark or other super hot element).
     private String burnType = ElementData.AIR;
     private Chance burnChance = Chance.ALWAYS_FALSE;
-    private double burnTemperature = Double.MAX_VALUE;
+    private double burnTemperature = 0;
 
     // dissolving (by acid).
     private String dissolveType = ElementData.AIR;
@@ -204,11 +204,6 @@ public abstract class Element implements Steppable {
         iMass = (mass == 0 ? 0:1/mass);
     }
 
-    public void updateMass(double newMass){
-        mass = newMass;
-        iMass = (mass == 0 ? 0:1/mass);
-    }
-
     public static Element spawn(String type){
         return ElementData.spawn(type);
     }
@@ -259,6 +254,7 @@ public abstract class Element implements Steppable {
 
     public void setMass(double mass) {
         this.mass = mass;
+        iMass = (mass == 0 ? 0:1/mass);
     }
 
     public double getiMass() {

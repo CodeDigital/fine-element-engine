@@ -20,6 +20,12 @@ public class Wood extends StaticElement {
         // set the element's mass data
         setMassData(ElementData.WOOD_DENSITY);
 
+        setConductivityHeat(ElementData.WOOD_CONDUCTIVITY_HEAT);
+
+        setBurnTemperature(ElementData.WOOD_BURN_TEMPERATURE);
+        setBurnChance(ElementData.DEFAULT_BURN_CHANCE);
+        setBurnType(ElementData.WOOD_BURN_TYPE);
+
         // set the colour of the element
         double noise = Math.random();
         double r = XMath.map(noise, 0, 1, 60, 110);

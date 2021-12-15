@@ -12,6 +12,11 @@ public abstract class Reaction extends Element{
         super(ElementData.MATTER_REACTION, TYPE);
     }
 
+    @Override
+    public void stepPhysics(double dt){
+        propagateTemperature(dt);
+        react(dt);
+    }
 
     @Override
     public void stepFSS(double dt) {
@@ -24,12 +29,6 @@ public abstract class Reaction extends Element{
         V2D down = cell.applyDirection(fssDown).add(cell.LOCATION);
 
         if(steppingCheckAndSwap(down, inFSS)) return;
-    }
-
-    @Override
-    public void stepPost(double dt) {
-        react(dt);
-        super.stepPost(dt);
     }
 
     public abstract void react(double dt);

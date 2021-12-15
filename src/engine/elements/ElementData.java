@@ -23,6 +23,7 @@ public class ElementData {
     public static final double STATIC_FRICTION = 0.95;
     public static final double REST_PRESSURE = XMath.sciNum(1.013, 5);
     public static final Chance DEFAULT_TEMPERATURE_CHANCE = new Chance(0.001);
+    public static final Chance DEFAULT_BURN_CHANCE = new Chance(0.01);
     public static final double DEFAULT_CONDUCTIVITY_HEAT = 1;
 
     // Element Information and Types
@@ -59,6 +60,9 @@ public class ElementData {
 
     public static final String WOOD = "wood";
     public static final double WOOD_DENSITY = 800;
+    public static final double WOOD_CONDUCTIVITY_HEAT = 0.0375;
+    public static final double WOOD_BURN_TEMPERATURE = XMath.toKelvin(0);
+    public static final String WOOD_BURN_TYPE = ElementData.ROCK;
 
     public static final String BOILER = "boiler";
     public static final double BOILER_DENSITY = 1000;
@@ -115,6 +119,8 @@ public class ElementData {
 
     // Reaction
     public static final String FIRE = "fire";
+    public static final double FIRE_CONDUCTIVITY_HEAT = 0.6;
+
 
     // REACTION TYPES
     public static final String MATTER_REACTION = "reaction";
