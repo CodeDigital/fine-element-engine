@@ -190,12 +190,16 @@ public abstract class Element implements Steppable {
     }
 
     public boolean checkAndSwap(V2D to, boolean inFSS){
-        if(cell.canSwap(to)){
+        if(canSwap(to, inFSS)){
             cell.swap(to);
             updatedInFSS = inFSS;
             return true;
         }
         return false;
+    }
+
+    public boolean canSwap(V2D to, boolean inFSS){
+        return cell.canSwap(to);
     }
 
     protected void setMassData(double density){

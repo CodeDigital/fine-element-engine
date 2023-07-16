@@ -276,4 +276,20 @@ public class Cell implements Steppable {
     public static void setWidth(double width) {
         Cell.width = width;
     }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(double pressure) {
+        this.pressure = pressure;
+    }
+
+    public double getNewPressure() {
+        return newPressure;
+    }
+
+    public void setNewPressure(double newPressure) {
+        this.newPressure = newPressure;
+    }
 }

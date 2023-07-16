@@ -15,6 +15,9 @@ public abstract class Fluid extends Element{
     private Chance fluidFSSSpread = new Chance(1);
     private double fluidFSSRange = 1;
 
+    private double fluidMaxMass;
+    private double fluidMaxCompress;
+
     public Fluid(String MATTER, String TYPE) {
         super(MATTER, TYPE);
     }
@@ -27,6 +30,7 @@ public abstract class Fluid extends Element{
     @Override
     public void stepFSS(double dt) {
         final boolean inFSS = true;
+
         Cell cell = getCell();
         assert cell != null;
 
@@ -62,6 +66,8 @@ public abstract class Fluid extends Element{
         }
     }
 
+
+
     @Override
     public void stepPost(double dt) {
         super.stepPost(dt);
@@ -94,6 +100,21 @@ public abstract class Fluid extends Element{
         this.fluidFSSRange = fluidFSSRange;
     }
 
+    public double getFluidMaxMass() {
+        return fluidMaxMass;
+    }
+
+    public void setFluidMaxMass(double fluidMaxMass) {
+        this.fluidMaxMass = fluidMaxMass;
+    }
+
+    public double getFluidMaxCompress() {
+        return fluidMaxCompress;
+    }
+
+    public void setFluidMaxCompress(double fluidMaxCompress) {
+        this.fluidMaxCompress = fluidMaxCompress;
+    }
 }
 
 
